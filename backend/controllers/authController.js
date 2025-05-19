@@ -2,9 +2,10 @@
 
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const { validationResult } = require('express-validator');
 
 exports.register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, confirmPassword, role } = req.body;
 
   // Validação básica dos campos
   if (!name || !email || !password || !role) {
@@ -38,6 +39,18 @@ exports.register = async (req, res) => {
     } else {
       return res.render('register', {
         error: 'A senha deve ter pelo menos 6 caracteres',
+        role: role || 'developer'
+      });
+    }
+  }
+
+  // Validação de confirmação de senha no backend
+  if (confirmPassword && password !== confirmPassword) {
+    if (req.headers['content-type'] === 'application/json') {
+      return res.status(400).json({ msg: 'As senhas não coincidem' });
+    } else {
+      return res.render('register', {
+        error: 'As senhas não coincidem',
         role: role || 'developer'
       });
     }
