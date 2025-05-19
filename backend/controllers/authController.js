@@ -1,8 +1,59 @@
+// Arquivo: backend/controllers/authController.js
+
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
   const { name, email, password, role } = req.body;
+
+  // Validação básica dos campos
+  if (!name || !email || !password || !role) {
+    if (req.headers['content-type'] === 'application/json') {
+      return res.status(400).json({ msg: 'Todos os campos são obrigatórios' });
+    } else {
+      return res.render('register', {
+        error: 'Todos os campos são obrigatórios',
+        role: role || 'developer'
+      });
+    }
+  }
+
+  // Validação de email
+  const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  if (!emailRegex.test(email)) {
+    if (req.headers['content-type'] === 'application/json') {
+      return res.status(400).json({ msg: 'Email inválido' });
+    } else {
+      return res.render('register', {
+        error: 'Email inválido',
+        role: role || 'developer'
+      });
+    }
+  }
+
+  // Validação de senha
+  if (password.length < 6) {
+    if (req.headers['content-type'] === 'application/json') {
+      return res.status(400).json({ msg: 'A senha deve ter pelo menos 6 caracteres' });
+    } else {
+      return res.render('register', {
+        error: 'A senha deve ter pelo menos 6 caracteres',
+        role: role || 'developer'
+      });
+    }
+  }
+
+  // Validação de role
+  if (role !== 'developer' && role !== 'investor') {
+    if (req.headers['content-type'] === 'application/json') {
+      return res.status(400).json({ msg: 'Perfil inválido' });
+    } else {
+      return res.render('register', {
+        error: 'Perfil inválido',
+        role: 'developer'
+      });
+    }
+  }
 
   try {
     const existingUser = await User.findOne({ email });
@@ -25,7 +76,7 @@ exports.register = async (req, res) => {
     }
   } catch (err) {
     console.error('Erro de registro:', err);
-    
+
     if (req.headers['content-type'] === 'application/json') {
       return res.status(500).json({ msg: 'Erro no registro', error: err.message });
     } else {
@@ -36,7 +87,16 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
-  const redirect = req.query.redirect || '/';
+  const redirect = req.query.redirect || req.session?.returnTo || '/';
+
+  // Validação básica
+  if (!email || !password) {
+    if (req.headers['content-type'] === 'application/json') {
+      return res.status(400).json({ msg: 'Email e senha são obrigatórios' });
+    } else {
+      return res.render('login', { error: 'Email e senha são obrigatórios' });
+    }
+  }
 
   try {
     const user = await User.findOne({ email });
@@ -49,8 +109,8 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, name: user.name, role: user.role }, 
-      process.env.JWT_SECRET, 
+      { id: user._id, name: user.name, role: user.role },
+      process.env.JWT_SECRET,
       { expiresIn: '2d' }
     );
 
@@ -60,15 +120,26 @@ exports.login = async (req, res) => {
       // Configurar cookie
       res.cookie('token', token, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Somente HTTPS em produção
+        sameSite: 'lax',
         maxAge: 2 * 24 * 60 * 60 * 1000 // 2 dias em milissegundos
       });
-      
+
+      // Limpar a URL de retorno da sessão, se existir
+      if (req.session) {
+        const returnTo = req.session.returnTo;
+        delete req.session.returnTo;
+        if (returnTo) {
+          return res.redirect(returnTo);
+        }
+      }
+
       // Redirecionar
       return res.redirect(redirect);
     }
   } catch (err) {
     console.error('Erro de login:', err);
-    
+
     if (req.headers['content-type'] === 'application/json') {
       return res.status(500).json({ msg: 'Erro no login', error: err.message });
     } else {
