@@ -1,0 +1,102 @@
+<!-- views/index.ejs -->
+<%- include('partials/header') %>
+
+    <div class="jumbotron bg-light p-5 mb-4 rounded">
+        <h1 class="display-4">Bem-vindo ao IncubePro</h1>
+        <p class="lead">A plataforma que conecta desenvolvedores talentosos com investidores visionários para
+            transformar ideias em projetos de sucesso.</p>
+        <hr class="my-4">
+        <p>Junte-se a nossa comunidade e comece a construir o futuro hoje!</p>
+        <div class="mt-4">
+            <a class="btn btn-primary btn-lg me-2" href="/register?role=developer">Sou Desenvolvedor</a>
+            <a class="btn btn-success btn-lg" href="/register?role=investor">Sou Investidor</a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-laptop-code fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Para Desenvolvedores</h5>
+                    <p class="card-text">Compartilhe suas ideias, obtenha financiamento e encontre colaboradores para
+                        seus projetos.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-hand-holding-usd fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Para Investidores</h5>
+                    <p class="card-text">Descubra projetos inovadores, apoie talentos e faça parte do sucesso de
+                        startups promissoras.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">Comunidade</h5>
+                    <p class="card-text">Conecte-se com profissionais da tecnologia, troque experiências e cresça em
+                        conjunto.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mb-4">Projetos em Destaque</h2>
+    <div class="row" id="featured-projects">
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-2">Carregando projetos...</p>
+        </div>
+    </div>
+
+    <script>
+        // Função para carregar projetos em destaque
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/projects?limit=3');
+                const projects = await response.json();
+
+                const projectsContainer = document.getElementById('featured-projects');
+                projectsContainer.innerHTML = '';
+
+                if (projects.length === 0) {
+                    projectsContainer.innerHTML = '<div class="col-12 text-center"><p>Nenhum projeto disponível no momento.</p></div>';
+                    return;
+                }
+
+                projects.forEach(project => {
+                    const projectCard = `
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">${project.title}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">${project.category}</h6>
+                                <p class="card-text">${project.description.substring(0, 100)}...</p>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: ${(project.currentFunding / project.fundingGoal) * 100}%"></div>
+                                </div>
+                                <p class="small">R$ ${project.currentFunding.toLocaleString('pt-BR')} de R$ ${project.fundingGoal.toLocaleString('pt-BR')}</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="/projects/${project._id}" class="btn btn-primary btn-sm">Ver detalhes</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    projectsContainer.innerHTML += projectCard;
+                });
+            } catch (error) {
+                console.error('Erro ao carregar projetos:', error);
+                document.getElementById('featured-projects').innerHTML = '<div class="col-12 text-center"><p>Erro ao carregar projetos. Tente novamente mais tarde.</p></div>';
+            }
+        });
+    </script>
+
+    <%- include('partials/footer') %>

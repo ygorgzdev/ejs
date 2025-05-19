@@ -10,6 +10,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const projectRoutes = require('./routes/projects');
+const pageRoutes = require('./routes/pages');
 
 // Carrega variáveis de ambiente
 dotenv.config();
@@ -26,7 +27,23 @@ app.use(cors({
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SECRET));
+
+// Configurando a view engine EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Servindo arquivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware para disponibilizar a variável user para todas as views
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
+});
+
+// Rotas para páginas com EJS
+app.use('/', pageRoutes);
 
 // Rotas da API
 app.use('/api/auth', authRoutes);
@@ -38,12 +55,17 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'API está funcionando!' });
 });
 
+// Rota 404 - precisa estar no final de todas as rotas
+app.use((req, res) => {
+  res.status(404).render('404', { title: 'Página não encontrada' });
+});
+
 // Inicialização do servidor
 connectDB()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`Servidor API rodando em http://localhost:${PORT}`);
-      console.log('Conecte seu frontend Vue a esta API');
+      console.log(`Servidor rodando em http://localhost:${PORT}`);
+      console.log('Aplicação com EJS configurada com sucesso!');
     });
   })
   .catch((err) => {
