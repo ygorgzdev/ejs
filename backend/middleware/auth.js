@@ -1,5 +1,4 @@
-// Arquivo: backend/middleware/auth.js
-
+// Middleware de autenticação atualizado para suportar rotas de página com EJS
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
@@ -57,9 +56,6 @@ exports.authPage = async (req, res, next) => {
     const token = req.cookies.token;
 
     if (!token) {
-      // Armazenar URL atual para redirecionamento pós-login
-      req.session = req.session || {};
-      req.session.returnTo = req.originalUrl;
       return res.redirect('/login');
     }
 
@@ -90,21 +86,4 @@ exports.authPage = async (req, res, next) => {
 
     return res.redirect('/login');
   }
-};
-
-// Middleware para verificar role específico
-exports.checkRole = (role) => {
-  return (req, res, next) => {
-    if (req.user && req.user.role === role) {
-      return next();
-    }
-
-    // Para rotas API
-    if (req.headers['content-type'] === 'application/json') {
-      return res.status(403).json({ msg: 'Acesso negado. Permissão insuficiente.' });
-    }
-
-    // Para páginas
-    return res.redirect('/');
-  };
 };

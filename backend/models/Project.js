@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// Schema do Projeto corrigido com valores consistentes
+// Schema do Projeto corrigido com valores em português
 const ProjectSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -13,13 +13,13 @@ const ProjectSchema = new mongoose.Schema({
   status: {
     type: String,
     required: true,
-    enum: ['Concept', 'In Progress', 'Beta Version', 'Launched'],
-    default: 'Concept',
+    enum: ['Conceito', 'Em andamento', 'Versão beta', 'No ar (lançado)'],
+    default: 'Conceito',
   },
   category: {
     type: String,
     required: [true, 'A categoria do projeto é obrigatória!'],
-    enum: ['Web Development', 'Mobile App', 'AI/Machine Learning', 'Blockchain', 'IoT', 'Games', 'Others'],
+    enum: ['Desenvolvimento Web', 'Aplicativo Mobile', 'IA/Machine Learning', 'Blockchain', 'IoT', 'Jogos', 'Outros'],
   },
   fundingGoal: {
     type: Number,
