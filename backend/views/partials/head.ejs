@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= typeof title !=='undefined' ? title : 'Meu Projeto Incrível' %>
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Pequeno ajuste para transições do carrossel se necessário */
+        .carousel-item {
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* Estilo para itens não ativos (invisíveis mas presentes para transição) */
+        .carousel-item:not(.active) {
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Estilo para itens ativos */
+        .carousel-item.active {
+            opacity: 1;
+            position: relative;
+            /* Ou static, dependendo do layout */
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 text-gray-800">

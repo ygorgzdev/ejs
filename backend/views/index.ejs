@@ -1,102 +1,170 @@
-<%- include('partials/header') %>
+<%- include('partials/head', { title: 'Página Inicial' }) %>
 
-    <section class="max-w-7xl mx-auto flex flex-col md:flex-row items-center px-6 py-12 gap-12">
+    <div x-data="appData()" class="min-h-screen flex flex-col">
+        <%- include('partials/navbar', { user: typeof user !=='undefined' ? user : null }) %>
 
-        <!-- Texto principal à esquerda -->
-        <div class="flex-1 text-center md:text-left space-y-6">
-            <h1 class="text-5xl font-extrabold text-gray-900 leading-tight">
-                Bem-vindo ao <span class="text-indigo-600">IncubePro</span>
-            </h1>
-            <p class="text-lg text-gray-700 max-w-lg mx-auto md:mx-0">
-                A plataforma que conecta desenvolvedores talentosos com investidores visionários para transformar ideias
-                em projetos de sucesso.
-            </p>
+            <main class="flex-grow">
+                <section class="relative w-full h-96 md:h-[500px] overflow-hidden" x-data="carouselData">
+                    <template x-for="(slide, index) in slides" :key="index">
+                        <div x-show="currentIndex === index"
+                            class="carousel-item absolute inset-0 bg-cover bg-center flex items-center justify-center text-white"
+                            :style="'background-image: url(' + slide.image + ');'"
+                            x-transition:enter="transition ease-out duration-500"
+                            x-transition:enter-start="opacity-0 transform scale-105"
+                            x-transition:enter-end="opacity-100 transform scale-100"
+                            x-transition:leave="transition ease-in duration-500"
+                            x-transition:leave-start="opacity-100 transform scale-100"
+                            x-transition:leave-end="opacity-0 transform scale-95">
+                            <div class="bg-black bg-opacity-50 p-8 rounded-lg text-center">
+                                <h2 class="text-3xl md:text-5xl font-bold mb-4" x-text="slide.title"></h2>
+                                <p class="text-lg md:text-xl" x-text="slide.caption"></p>
+                            </div>
+                        </div>
+                    </template>
 
-            <div class="flex justify-center md:justify-start gap-6">
-                <a href="/register?role=developer"
-                    class="px-8 py-3 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700 transition">
-                    Sou Desenvolvedor
-                </a>
-                <a href="/register?role=investor"
-                    class="px-8 py-3 bg-green-600 text-white rounded-md shadow hover:bg-green-700 transition">
-                    Sou Investidor
-                </a>
-            </div>
-        </div>
+                    <button @click="prevSlide"
+                        class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 focus:outline-none">
+                        <span class="material-icons-outlined">chevron_left</span>
+                    </button>
+                    <button @click="nextSlide"
+                        class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 focus:outline-none">
+                        <span class="material-icons-outlined">chevron_right</span>
+                    </button>
 
-        <!-- Carrossel à direita -->
-        <div class="flex-1 max-w-xl w-full rounded-lg overflow-hidden shadow-lg relative">
-            <div id="carousel" class="overflow-hidden relative">
-                <div class="flex transition-transform duration-700 ease-in-out" style="transform: translateX(0%);"
-                    data-carousel-inner>
-                    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
-                        alt="Imagem 1" class="w-full flex-shrink-0 object-cover h-80 sm:h-96" />
-                    <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80"
-                        alt="Imagem 2" class="w-full flex-shrink-0 object-cover h-80 sm:h-96" />
-                    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80"
-                        alt="Imagem 3" class="w-full flex-shrink-0 object-cover h-80 sm:h-96" />
-                </div>
+                    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                        <template x-for="(slide, index) in slides" :key="index">
+                            <button @click="currentIndex = index"
+                                :class="{'bg-white': currentIndex === index, 'bg-gray-400': currentIndex !== index}"
+                                class="w-3 h-3 rounded-full hover:bg-white focus:outline-none"></button>
+                        </template>
+                    </div>
+                </section>
 
-                <!-- Indicadores -->
-                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-3">
-                    <button data-slide-to="0"
-                        class="w-3 h-3 rounded-full bg-white opacity-70 hover:opacity-100"></button>
-                    <button data-slide-to="1"
-                        class="w-3 h-3 rounded-full bg-white opacity-40 hover:opacity-100"></button>
-                    <button data-slide-to="2"
-                        class="w-3 h-3 rounded-full bg-white opacity-40 hover:opacity-100"></button>
-                </div>
-            </div>
-        </div>
+                <section class="py-12 bg-white">
+                    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                        <h1 class="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                            Bem-vindo ao <span class="text-indigo-600">MeuProjeto</span>!
+                        </h1>
+                        <p class="mt-6 max-w-2xl mx-auto text-xl text-gray-600">
+                            Este é o seu novo ponto de partida para gerenciar projetos incríveis. Explore nossas
+                            funcionalidades e comece a transformar suas ideias em realidade.
+                        </p>
+                        <% if (typeof user==='undefined' || !user) { %>
+                            <div class="mt-8">
+                                <a href="/register"
+                                    class="inline-block bg-indigo-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300">
+                                    Crie sua conta gratuitamente
+                                </a>
+                            </div>
+                            <% } %>
+                    </div>
+                </section>
 
-    </section>
+                <% if (typeof user !=='undefined' && user) { %>
+                    <section class="py-12 bg-indigo-50">
+                        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">Painel Rápido</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                                    <h3 class="text-xl font-semibold text-indigo-700 mb-3">Seus Projetos Ativos</h3>
+                                    <p class="text-gray-600 mb-4">Acesse e gerencie todos os seus projetos em andamento.
+                                    </p>
+                                    <a href="/projetos" class="text-indigo-600 hover:text-indigo-800 font-medium">Ver
+                                        Meus Projetos &rarr;</a>
+                                </div>
+                                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                                    <h3 class="text-xl font-semibold text-indigo-700 mb-3">Criar Novo Projeto</h3>
+                                    <p class="text-gray-600 mb-4">Comece um novo projeto e adicione colaboradores.</p>
+                                    <a href="/projetos/novo"
+                                        class="text-indigo-600 hover:text-indigo-800 font-medium">Iniciar Novo Projeto
+                                        &rarr;</a>
+                                </div>
+                                <div
+                                    class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow md:col-span-2">
+                                    <h3 class="text-xl font-semibold text-indigo-700 mb-3">Notificações Recentes</h3>
+                                    <p class="text-gray-600">Você não possui novas notificações no momento.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <% } %>
+
+                        <section class="py-12">
+                            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                                <h2 class="text-3xl font-bold text-gray-900 mb-6">Recursos Principais</h2>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                                        <span
+                                            class="material-icons-outlined text-indigo-500 text-4xl mb-4 inline-block">manage_accounts</span>
+                                        <h3 class="text-xl font-semibold mb-2">Gerenciamento Fácil</h3>
+                                        <p class="text-gray-600">Interface intuitiva para gerenciar seus projetos e
+                                            equipes.</p>
+                                    </div>
+                                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                                        <span
+                                            class="material-icons-outlined text-indigo-500 text-4xl mb-4 inline-block">groups</span>
+                                        <h3 class="text-xl font-semibold mb-2">Colaboração</h3>
+                                        <p class="text-gray-600">Convide membros e trabalhem juntos em tempo real.</p>
+                                    </div>
+                                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                                        <span
+                                            class="material-icons-outlined text-indigo-500 text-4xl mb-4 inline-block">analytics</span>
+                                        <h3 class="text-xl font-semibold mb-2">Acompanhamento</h3>
+                                        <p class="text-gray-600">Monitore o progresso e os prazos de forma eficiente.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+            </main>
+
+            <%- include('partials/footer') %>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const carousel = document.querySelector('[data-carousel-inner]');
-            const slides = carousel.children;
-            const indicators = document.querySelectorAll('[data-slide-to]');
-            let currentIndex = 0;
-            let intervalId = null;
-            const slideCount = slides.length;
+        function appData() {
+            return {
+                // Dados globais da aplicação no frontend, se necessário
+            };
+        }
 
-            function updateCarousel() {
-                carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
-                indicators.forEach((btn, i) => {
-                    btn.classList.toggle('opacity-70', i === currentIndex);
-                    btn.classList.toggle('opacity-40', i !== currentIndex);
-                });
+        function carouselData() {
+            return {
+                currentIndex: 0,
+                slides: [
+                    {
+                        image: '/images/carousel1.jpg', // Substitua pelo caminho das suas imagens
+                        title: 'Inovação e Criatividade',
+                        caption: 'Transformamos ideias em soluções digitais impactantes.'
+                    },
+                    {
+                        image: '/images/carousel2.jpg',
+                        title: 'Colaboração Eficiente',
+                        caption: 'Trabalhe em equipe de forma integrada e produtiva.'
+                    },
+                    {
+                        image: '/images/carousel3.jpg',
+                        title: 'Resultados Extraordinários',
+                        caption: 'Alcance seus objetivos com nossa plataforma.'
+                    }
+                ],
+                prevSlide() {
+                    this.currentIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+                },
+                nextSlide() {
+                    this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+                },
+                init() {
+                    // Troca automática de slides (opcional)
+                    // setInterval(() => {
+                    //     this.nextSlide();
+                    // }, 5000); // Troca a cada 5 segundos
+                }
             }
-
-            function nextSlide() {
-                currentIndex = (currentIndex + 1) % slideCount;
-                updateCarousel();
-            }
-
-            // Auto slide a cada 4 segundos
-            function startAutoSlide() {
-                intervalId = setInterval(nextSlide, 3000);
-            }
-
-            function stopAutoSlide() {
-                clearInterval(intervalId);
-            }
-
-            indicators.forEach((btn, i) => {
-                btn.addEventListener('click', () => {
-                    currentIndex = i;
-                    updateCarousel();
-                    stopAutoSlide();
-                    startAutoSlide();
-                });
-            });
-
-            // Pausar auto slide ao passar o mouse no carrossel
-            const carouselContainer = document.getElementById('carousel');
-            carouselContainer.addEventListener('mouseenter', stopAutoSlide);
-            carouselContainer.addEventListener('mouseleave', startAutoSlide);
-
-            updateCarousel();
-            startAutoSlide();
-        });
+        }
     </script>
+
+    </body>
+
+    </html>

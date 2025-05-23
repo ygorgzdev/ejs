@@ -1,40 +1,9 @@
-<!-- views/partials/footer.ejs -->
-</div>
-
-<footer class="bg-dark text-white mt-5 py-4">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h5>IncubePro</h5>
-                <p>Conectando desenvolvedores e investidores para transformar ideias em realidade.</p>
-            </div>
-            <div class="col-md-3">
-                <h5>Links</h5>
-                <ul class="list-unstyled">
-                    <li><a href="/" class="text-white">Home</a></li>
-                    <li><a href="/projects" class="text-white">Projetos</a></li>
-                    <li><a href="/register?role=developer" class="text-white">Desenvolvedores</a></li>
-                    <li><a href="/register?role=investor" class="text-white">Investidores</a></li>
-                </ul>
-            </div>
-            <div class="col-md-3">
-                <h5>Contato</h5>
-                <ul class="list-unstyled">
-                    <li><i class="fas fa-envelope me-2"></i> contato@incubepro.com</li>
-                    <li><i class="fas fa-phone me-2"></i> (11) 3456-7890</li>
-                </ul>
-            </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col-12 text-center">
-                <p class="mb-0">&copy; <%= new Date().getFullYear() %> IncubePro. Todos os direitos reservados.</p>
-            </div>
-        </div>
+<footer class="bg-gray-800 text-white py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p>&copy; <%= new Date().getFullYear() %> MeuProjeto. Todos os direitos reservados.</p>
+        <p class="mt-1">
+            <a href="/termos" class="hover:text-indigo-400">Termos de Serviço</a> |
+            <a href="/privacidade" class="hover:text-indigo-400">Política de Privacidade</a>
+        </p>
     </div>
 </footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/main.js"></script>
-</body>
-
-</html>
