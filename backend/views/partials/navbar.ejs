@@ -3,121 +3,118 @@
         <div class="flex items-center justify-between h-16 md:h-20">
 
             <div class="flex items-center">
-                <a href="/" class="flex items-center space-x-2">
-                    <div
-                        class="bg-primary-500 text-white h-10 w-10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-lightbulb text-xl"></i>
-                    </div>
+                <a href="/" class="flex-shrink-0">
                     <img src="/logo.png" alt="IncubePro Logo" class="h-8 md:h-10 w-auto">
                 </a>
+                <div class="hidden md:flex md:ml-8 lg:ml-12 space-x-2 lg:space-x-4">
+                    <a href="/"
+                        class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Início</a>
+                    <a href="/recursos"
+                        class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Recursos</a>
+                    <a href="/precos"
+                        class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Preços</a>
+                    <a href="/sobre"
+                        class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Sobre</a>
+
+                    <% if (typeof user !=='undefined' && user) { %>
+                        <a href="/dashboard"
+                            class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Dashboard</a>
+                        <a href="/projetos"
+                            class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Meus
+                            Projetos</a>
+                        <% } %>
+                </div>
             </div>
-            <div class="hidden md:flex md:ml-8 lg:ml-12 space-x-2 lg:space-x-4">
-                <a href="/"
-                    class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Início</a>
-                <a href="/recursos"
-                    class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Recursos</a>
-                <a href="/precos"
-                    class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Preços</a>
-                <a href="/sobre"
-                    class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Sobre</a>
 
-                <% if (typeof user !=='undefined' && user) { %>
-                    <a href="/dashboard"
-                        class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Dashboard</a>
-                    <a href="/projetos"
-                        class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Meus
-                        Projetos</a>
-                    <% } %>
-            </div>
-        </div>
+            <div class="flex items-center">
+                <div class="hidden md:flex items-center space-x-3">
+                    <% if (typeof user !=='undefined' && user) { %>
+                        <div class="relative" @click.away="userDropdownOpen = false">
+                            <button @click="userDropdownOpen = !userDropdownOpen" type="button"
+                                class="flex items-center space-x-2 p-1 rounded-full hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150 ease-in-out"
+                                id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                <span class="sr-only">Abrir menu do usuário</span>
+                                <% if (user.avatarUrl) { %>
+                                    <img class="h-8 w-8 rounded-full" src="<%= user.avatarUrl %>" alt="Avatar">
+                                    <% } else { %>
+                                        <span
+                                            class="material-icons-outlined text-2xl text-blue-600">account_circle</span>
+                                        <% } %>
+                                            <span class="text-sm font-medium text-gray-600 hidden lg:block">
+                                                <%= user.name ? user.name.split(' ')[0] : ' Usuário' %>
+                                            </span>
+                                            <span class="material-icons-outlined text-lg text-blue-600 hidden lg:block"
+                                                :class="{'transform rotate-180': userDropdownOpen}">expand_more</span>
+                            </button>
 
-        <div class="flex items-center">
-            <div class="hidden md:flex items-center space-x-3">
-                <% if (typeof user !=='undefined' && user) { %>
-                    <div class="relative" @click.away="userDropdownOpen = false">
-                        <button @click="userDropdownOpen = !userDropdownOpen" type="button"
-                            class="flex items-center space-x-2 p-1 rounded-full hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150 ease-in-out"
-                            id="user-menu-button" aria-expanded="false" aria-haspopup="true">
-                            <span class="sr-only">Abrir menu do usuário</span>
-                            <% if (user.avatarUrl) { %>
-                                <img class="h-8 w-8 rounded-full" src="<%= user.avatarUrl %>" alt="Avatar">
-                                <% } else { %>
-                                    <span class="material-icons-outlined text-2xl text-blue-600">account_circle</span>
-                                    <% } %>
-                                        <span class="text-sm font-medium text-gray-600 hidden lg:block">
-                                            <%= user.name ? user.name.split(' ')[0] : ' Usuário' %>
-                                        </span>
-                                        <span class="material-icons-outlined text-lg text-blue-600 hidden lg:block"
-                                            :class="{'transform rotate-180': userDropdownOpen}">expand_more</span>
-                        </button>
-
-                        <div x-show="userDropdownOpen" x-cloak x-transition:enter="transition ease-out duration-100"
-                            x-transition:enter-start="transform opacity-0 scale-95"
-                            x-transition:enter-end="transform opacity-100 scale-100"
-                            x-transition:leave="transition ease-in duration-75"
-                            x-transition:leave-start="transform opacity-100 scale-100"
-                            x-transition:leave-end="transform opacity-0 scale-95"
-                            class="origin-top-right absolute right-0 mt-2 w-64 rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none py-1"
-                            role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-                            <div class="px-4 py-3">
-                                <p class="text-sm text-gray-500">Logado como:</p>
-                                <p class="text-base font-semibold text-gray-800 truncate">
-                                    <%= user.name || 'Nome não informado' %>
-                                </p>
-                                <p class="text-xs text-gray-500 truncate">
-                                    <%= user.email || 'Email não informado' %>
-                                </p>
-                            </div>
-                            <div class="border-t border-gray-100"></div>
-                            <a href="/perfil"
-                                class="group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors duration-150"
-                                role="menuitem" tabindex="-1">
-                                <span
-                                    class="material-icons-outlined text-lg mr-3 text-gray-400 group-hover:text-blue-600 transition-colors duration-150">person_outline</span>
-                                Meu Perfil
-                            </a>
-                            <a href="/configuracoes"
-                                class="group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors duration-150"
-                                role="menuitem" tabindex="-1">
-                                <span
-                                    class="material-icons-outlined text-lg mr-3 text-gray-400 group-hover:text-blue-600 transition-colors duration-150">settings</span>
-                                Configurações
-                            </a>
-                            <div class="border-t border-gray-100"></div>
-                            <form action="/api/auth/logout" method="POST" role="none" class="block">
-                                <button type="submit"
-                                    class="group flex items-center w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-150"
+                            <div x-show="userDropdownOpen" x-cloak x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="transform opacity-0 scale-95"
+                                x-transition:enter-end="transform opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="transform opacity-100 scale-100"
+                                x-transition:leave-end="transform opacity-0 scale-95"
+                                class="origin-top-right absolute right-0 mt-2 w-64 rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none py-1"
+                                role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button"
+                                tabindex="-1">
+                                <div class="px-4 py-3">
+                                    <p class="text-sm text-gray-500">Logado como:</p>
+                                    <p class="text-base font-semibold text-gray-800 truncate">
+                                        <%= user.name || 'Nome não informado' %>
+                                    </p>
+                                    <p class="text-xs text-gray-500 truncate">
+                                        <%= user.email || 'Email não informado' %>
+                                    </p>
+                                </div>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="/perfil"
+                                    class="group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors duration-150"
                                     role="menuitem" tabindex="-1">
                                     <span
-                                        class="material-icons-outlined text-lg mr-3 text-red-600 group-hover:text-red-700 transition-colors duration-150">logout</span>
-                                    Sair
-                                </button>
-                            </form>
+                                        class="material-icons-outlined text-lg mr-3 text-gray-400 group-hover:text-blue-600 transition-colors duration-150">person_outline</span>
+                                    Meu Perfil
+                                </a>
+                                <a href="/configuracoes"
+                                    class="group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors duration-150"
+                                    role="menuitem" tabindex="-1">
+                                    <span
+                                        class="material-icons-outlined text-lg mr-3 text-gray-400 group-hover:text-blue-600 transition-colors duration-150">settings</span>
+                                    Configurações
+                                </a>
+                                <div class="border-t border-gray-100"></div>
+                                <form action="/api/auth/logout" method="POST" role="none" class="block">
+                                    <button type="submit"
+                                        class="group flex items-center w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-150"
+                                        role="menuitem" tabindex="-1">
+                                        <span
+                                            class="material-icons-outlined text-lg mr-3 text-red-600 group-hover:text-red-700 transition-colors duration-150">logout</span>
+                                        Sair
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                    </div>
-                    <% } else { %>
-                        <a href="/login"
-                            class="text-blue-700 hover:text-blue-800 hover:bg-blue-100 px-4 py-2 rounded-md text-sm font-semibold transition-all duration-150 ease-in-out">
-                            Entrar
-                        </a>
-                        <a href="/register"
-                            class="ml-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-150 ease-in-out">
-                            Criar Conta
-                        </a>
-                        <% } %>
-            </div>
+                        <% } else { %>
+                            <a href="/login"
+                                class="text-blue-700 hover:text-blue-800 hover:bg-blue-100 px-4 py-2 rounded-md text-sm font-semibold transition-all duration-150 ease-in-out">
+                                Entrar
+                            </a>
+                            <a href="/register"
+                                class="ml-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-150 ease-in-out">
+                                Criar Conta
+                            </a>
+                            <% } %>
+                </div>
 
-            <div class="ml-2 -mr-2 flex md:hidden">
-                <button @click="mobileMenuOpen = !mobileMenuOpen" type="button"
-                    class="bg-white inline-flex items-center justify-center p-2 rounded-md text-blue-500 hover:text-blue-600 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors duration-150"
-                    aria-controls="mobile-menu" aria-expanded="false">
-                    <span class="sr-only">Abrir menu principal</span>
-                    <span x-show="!mobileMenuOpen" class="material-icons-outlined">menu</span>
-                    <span x-show="mobileMenuOpen" x-cloak class="material-icons-outlined">close</span>
-                </button>
+                <div class="ml-2 -mr-2 flex md:hidden">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button"
+                        class="bg-white inline-flex items-center justify-center p-2 rounded-md text-blue-500 hover:text-blue-600 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors duration-150"
+                        aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Abrir menu principal</span>
+                        <span x-show="!mobileMenuOpen" class="material-icons-outlined">menu</span>
+                        <span x-show="mobileMenuOpen" x-cloak class="material-icons-outlined">close</span>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 
     <div x-show="mobileMenuOpen" x-cloak @click.away="mobileMenuOpen = false"
