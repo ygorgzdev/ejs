@@ -3,9 +3,26 @@
         <div class="flex items-center justify-between h-16 md:h-20">
 
             <div class="flex items-center">
-                <a href="/">
-                    <img src="/logo.svg" alt="Whisk-storyboardd4e02e708357428f948873ca-removebg-preview" />
+                <a href="/" class="flex items-center space-x-2">
+                    <!-- Múltiplas tentativas de carregar a imagem globe -->
+                    <img src="/globe.png" alt="Globe Icon" class="h-8 w-8"
+                        onerror="this.onerror=null; this.src='/globe.png'; console.log('Tentando globe.png');"
+                        onload="console.log('Globe carregado com sucesso!');" />
+
+                    <!-- Fallback com ícone HTML se as imagens não carregarem -->
+                    <span
+                        class="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm"
+                        style="display: none;" id="globe-fallback">🌍</span>
+
                 </a>
+
+                <!-- Debug info (remover em produção) -->
+                <div class="ml-4 text-xs text-gray-500 hidden md:block">
+                    <span onclick="window.open('/debug/public', '_blank')" class="cursor-pointer hover:text-blue-600">
+                        🔍 Debug
+                    </span>
+                </div>
+
                 <div class="hidden md:flex md:ml-8 lg:ml-12 space-x-2 lg:space-x-4">
                     <a href="/"
                         class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Início</a>
@@ -199,4 +216,22 @@
                 </div>
                 <% } %>
     </div>
+
+    <script>
+        // Script para mostrar fallback se as imagens não carregarem
+        document.addEventListener('DOMContentLoaded', function () {
+            const globeImg = document.querySelector('img[src="/globe.svg"]');
+            const fallback = document.getElementById('globe-fallback');
+
+            if (globeImg) {
+                globeImg.addEventListener('error', function () {
+                    console.log('Todas as tentativas de imagem falharam, mostrando fallback');
+                    this.style.display = 'none';
+                    if (fallback) {
+                        fallback.style.display = 'flex';
+                    }
+                });
+            }
+        });
+    </script>
 </nav>

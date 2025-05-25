@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
+const fs = require('fs');
 const connectDB = require('./config/db');
 
 // Rotas da API v1
@@ -44,8 +45,30 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Debug: Verificar se a pasta public existe
+const publicPath = path.join(__dirname, 'public');
+console.log('🔍 Caminho da pasta public:', publicPath);
+console.log('📁 Pasta public existe?', fs.existsSync(publicPath));
+
+if (fs.existsSync(publicPath)) {
+  const files = fs.readdirSync(publicPath);
+  console.log('📄 Arquivos na pasta public:', files);
+
+  // Verificar especificamente por arquivos globe
+  const globeFiles = files.filter(file => file.toLowerCase().includes('globe'));
+  console.log('🌍 Arquivos globe encontrados:', globeFiles);
+}
+
+// Middleware de debug para arquivos estáticos
+app.use('/public', (req, res, next) => {
+  console.log(`🔍 Requisição para arquivo estático: ${req.url}`);
+  console.log(`📍 Caminho completo: ${path.join(publicPath, req.url)}`);
+  console.log(`✅ Arquivo existe? ${fs.existsSync(path.join(publicPath, req.url))}`);
+  next();
+});
+
 // Servindo arquivos estáticos
-app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(publicPath));
 
 // Middleware para logging em desenvolvimento
 if (process.env.NODE_ENV === 'development') {
@@ -59,6 +82,32 @@ if (process.env.NODE_ENV === 'development') {
 app.use((req, res, next) => {
   res.locals.user = req.user || null;
   next();
+});
+
+// Rota de teste para listar arquivos públicos
+app.get('/debug/public', (req, res) => {
+  try {
+    const files = fs.readdirSync(publicPath);
+    const fileDetails = files.map(file => {
+      const filePath = path.join(publicPath, file);
+      const stats = fs.statSync(filePath);
+      return {
+        name: file,
+        size: stats.size,
+        isFile: stats.isFile(),
+        path: `/public/${file}`,
+        directPath: `/${file}`
+      };
+    });
+
+    res.json({
+      publicPath,
+      files: fileDetails,
+      globeFiles: fileDetails.filter(f => f.name.toLowerCase().includes('globe'))
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // ===========================================
@@ -169,6 +218,7 @@ const startServer = async () => {
       console.log(`📡 Servidor rodando em: http://localhost:${PORT}`);
       console.log(`🔗 API v1: http://localhost:${PORT}/api/v1/`);
       console.log(`🌐 Páginas: http://localhost:${PORT}/`);
+      console.log(`🔍 Debug público: http://localhost:${PORT}/debug/public`);
       console.log(`💻 Ambiente: ${process.env.NODE_ENV || 'development'}`);
       console.log('=====================================');
 
@@ -182,6 +232,7 @@ const startServer = async () => {
         console.log('   POST /api/v1/sessions       - Login');
         console.log('   GET  /api/v1/sessions/current - Verificar sessão');
         console.log('   GET  /api/health            - Health check');
+        console.log('   GET  /debug/public          - Debug arquivos públicos');
         console.log('=====================================');
       }
     });
