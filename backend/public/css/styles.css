@@ -1,0 +1,36 @@
+.img-logo {
+    width: 180px;
+}
+
+.nav-link-animated {
+    position: relative;
+    /* Remove o sublinhado padrão para links, se houver */
+    text-decoration: none;
+    /* Mantém as transições de cor do texto */
+    transition: color 0.15s ease-in-out;
+}
+
+.nav-link-animated::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    /* Espessura da linha */
+    bottom: 4px;
+    /* Distância da linha ao texto (ajuste conforme o padding py-2) */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: currentColor;
+    /* Usa a cor atual do texto (azul no hover) */
+    transition: width 0.3s ease-in-out;
+    /* Duração e easing da animação da largura */
+}
+
+.nav-link-animated:hover::after {
+    width: 80%;
+    /* Faz a linha expandir para 100% da largura do link (incluindo padding horizontal) */
+}
+
+.top-gif {
+    width: 100%;
+}

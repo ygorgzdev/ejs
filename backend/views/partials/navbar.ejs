@@ -2,48 +2,33 @@
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16 md:h-20">
 
-            <div class="flex items-center">
-                <a href="/" class="flex items-center space-x-2">
-                    <!-- Múltiplas tentativas de carregar a imagem globe -->
-                    <img src="/globe.png" alt="Globe Icon" class="h-8 w-8"
-                        onerror="this.onerror=null; this.src='/globe.png'; console.log('Tentando globe.png');"
-                        onload="console.log('Globe carregado com sucesso!');" />
-
-                    <!-- Fallback com ícone HTML se as imagens não carregarem -->
-                    <span
-                        class="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm"
-                        style="display: none;" id="globe-fallback">🌍</span>
-
+            <div class="flex-shrink-0">
+                <a href="/">
+                    <img src="/img/logo.png" alt="logo navbar"
+                        class="img-logo transform hover:-translate-y-1 transition duration-200" />
                 </a>
-
-                <!-- Debug info (remover em produção) -->
-                <div class="ml-4 text-xs text-gray-500 hidden md:block">
-                    <span onclick="window.open('/debug/public', '_blank')" class="cursor-pointer hover:text-blue-600">
-                        🔍 Debug
-                    </span>
-                </div>
-
-                <div class="hidden md:flex md:ml-8 lg:ml-12 space-x-2 lg:space-x-4">
-                    <a href="/"
-                        class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Início</a>
-                    <a href="/recursos"
-                        class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Recursos</a>
-                    <a href="/precos"
-                        class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Preços</a>
-                    <a href="/sobre"
-                        class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Sobre</a>
-
-                    <% if (typeof user !=='undefined' && user) { %>
-                        <a href="/dashboard"
-                            class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Dashboard</a>
-                        <a href="/projetos"
-                            class="text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out">Meus
-                            Projetos</a>
-                        <% } %>
-                </div>
             </div>
 
-            <div class="flex items-center">
+            <div class="hidden md:flex flex-1 justify-center items-center space-x-2 lg:space-x-4">
+                <a href="/"
+                    class="nav-link-animated text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Início</a>
+                <a href="/recursos"
+                    class="nav-link-animated text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Recursos</a>
+                <a href="/precos"
+                    class="nav-link-animated text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Preços</a>
+                <a href="/sobre"
+                    class="nav-link-animated text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Sobre</a>
+
+                <% if (typeof user !=='undefined' && user) { %>
+                    <a href="/dashboard"
+                        class="nav-link-animated text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                    <a href="/projetos"
+                        class="nav-link-animated text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Meus
+                        Projetos</a>
+                    <% } %>
+            </div>
+
+            <div class="flex items-center flex-shrink-0">
                 <div class="hidden md:flex items-center space-x-3">
                     <% if (typeof user !=='undefined' && user) { %>
                         <div class="relative" @click.away="userDropdownOpen = false">
@@ -216,22 +201,4 @@
                 </div>
                 <% } %>
     </div>
-
-    <script>
-        // Script para mostrar fallback se as imagens não carregarem
-        document.addEventListener('DOMContentLoaded', function () {
-            const globeImg = document.querySelector('img[src="/globe.svg"]');
-            const fallback = document.getElementById('globe-fallback');
-
-            if (globeImg) {
-                globeImg.addEventListener('error', function () {
-                    console.log('Todas as tentativas de imagem falharam, mostrando fallback');
-                    this.style.display = 'none';
-                    if (fallback) {
-                        fallback.style.display = 'flex';
-                    }
-                });
-            }
-        });
-    </script>
 </nav>
