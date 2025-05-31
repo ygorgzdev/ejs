@@ -79,5 +79,12 @@ exports.login = async (req, res) => {
 
 exports.logout = (req, res) => {
   res.clearCookie('token');
-  res.redirect('/login');
+
+  if (req.headers['content-type'] === 'application/json') {
+    // Chamada via API
+    return res.json({ success: true, message: 'Logout realizado com sucesso' });
+  } else {
+    // Navegador - redirecionar para login
+    return res.redirect('/login');
+  }
 };

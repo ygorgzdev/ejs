@@ -8,6 +8,9 @@ const helmet = require('helmet');
 const fs = require('fs');
 const connectDB = require('./config/db');
 
+// Middleware customizado
+const { populateUser } = require('./middleware/userMiddleware');
+
 // Rotas da API v1
 const userRoutes = require('./routes/users');
 const projectRoutes = require('./routes/projects');
@@ -79,10 +82,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Middleware para disponibilizar a variável user para todas as views
-app.use((req, res, next) => {
-  res.locals.user = req.user || null;
-  next();
-});
+app.use(populateUser);
 
 // Rota de teste para listar arquivos públicos
 app.get('/debug/public', (req, res) => {
@@ -108,6 +108,15 @@ app.get('/debug/public', (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+// Rota de debug para verificar usuário logado
+app.get('/debug/user', (req, res) => {
+  res.json({
+    user: req.user || null,
+    hasToken: !!req.cookies.token,
+    token: req.cookies.token ? 'presente' : 'ausente'
+  });
 });
 
 // ===========================================
@@ -219,6 +228,7 @@ const startServer = async () => {
       console.log(`🔗 API v1: http://localhost:${PORT}/api/v1/`);
       console.log(`🌐 Páginas: http://localhost:${PORT}/`);
       console.log(`🔍 Debug público: http://localhost:${PORT}/debug/public`);
+      console.log(`👤 Debug usuário: http://localhost:${PORT}/debug/user`);
       console.log(`💻 Ambiente: ${process.env.NODE_ENV || 'development'}`);
       console.log('=====================================');
 
@@ -233,6 +243,7 @@ const startServer = async () => {
         console.log('   GET  /api/v1/sessions/current - Verificar sessão');
         console.log('   GET  /api/health            - Health check');
         console.log('   GET  /debug/public          - Debug arquivos públicos');
+        console.log('   GET  /debug/user            - Debug usuário logado');
         console.log('=====================================');
       }
     });
