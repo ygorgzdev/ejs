@@ -95,14 +95,19 @@ exports.getCurrentSession = async (req, res) => {
 // Deletar sessão (logout)
 exports.deleteSession = (req, res) => {
     try {
+        // Limpar cookie com as mesmas opções da criação
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            path: '/'
+        });
+
         // Para requests de API
         if (req.headers['content-type'] === 'application/json' || req.headers.accept?.includes('application/json')) {
-            // Em uma implementação completa, você poderia manter uma blacklist de tokens
-            // ou usar um sistema de refresh tokens
             return sendSuccess(res, null, 'Logout realizado com sucesso');
         } else {
             // Para requests de formulário (EJS)
-            res.clearCookie('token');
             return res.redirect('/login');
         }
     } catch (err) {
