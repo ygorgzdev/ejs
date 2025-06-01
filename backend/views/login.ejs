@@ -1,32 +1,108 @@
 <%- include('partials/head') %>
-    <%- include('partials/navbar') %>
+    <%- include('partials/auth-navbar') %>
 
-        <div class="min-h-screen flex items-center justify-center bg-gray-900 px-4">
-            <div class="bg-gray-800 rounded-lg shadow-lg max-w-md w-full p-8 animate__animated animate__fadeInUp">
-                <h2 class="text-3xl font-semibold text-center text-gray-200 mb-6">
-                    Entrar no IncubePro
-                </h2>
-                <form action="/login" method="POST" class="space-y-6">
-                    <div>
-                        <label for="email" class="block text-gray-300 font-medium mb-2">Email</label>
-                        <input type="email" id="email" name="email" required placeholder="seuemail@exemplo.com"
-                            class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+        <div
+            class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4 py-12">
+            <div class="w-full max-w-md">
+                <!-- Card Principal -->
+                <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                    <!-- Header -->
+                    <div
+                        class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-8 text-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-black opacity-5"></div>
+                        <div class="relative z-10">
+                            <div
+                                class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
+                                <span class="material-icons-outlined text-white text-2xl">login</span>
+                            </div>
+                            <h2 class="text-2xl font-bold text-white mb-2">
+                                Bem-vindo de volta!
+                            </h2>
+                            <p class="text-blue-100 text-sm">
+                                Entre na sua conta do IncubePro
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <label for="password" class="block text-gray-300 font-medium mb-2">Senha</label>
-                        <input type="password" id="password" name="password" required placeholder="••••••••"
-                            class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
-                    </div>
-                    <button type="submit"
-                        class="w-full bg-indigo-700 hover:bg-indigo-800 text-gray-100 font-semibold py-3 rounded-md shadow-md transition">
-                        Entrar
-                    </button>
-                </form>
 
-                <p class="mt-6 text-center text-gray-400">
-                    Não tem uma conta?
-                    <a href="/register" class="text-indigo-400 font-semibold hover:underline">Cadastre-se</a>
-                </p>
+                    <!-- Formulário -->
+                    <div class="px-8 py-8">
+                        <form action="/login" method="POST" class="space-y-6">
+                            <!-- Campo Email -->
+                            <div class="space-y-2">
+                                <label for="email" class="block text-sm font-semibold text-gray-700">
+                                    Endereço de email
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="material-icons-outlined text-gray-400 text-lg">email</span>
+                                    </div>
+                                    <input type="email" id="email" name="email" required
+                                        placeholder="seuemail@exemplo.com"
+                                        class="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white" />
+                                </div>
+                            </div>
+
+                            <!-- Campo Senha -->
+                            <div class="space-y-2">
+                                <label for="password" class="block text-sm font-semibold text-gray-700">
+                                    Senha
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="material-icons-outlined text-gray-400 text-lg">lock</span>
+                                    </div>
+                                    <input type="password" id="password" name="password" required placeholder="••••••••"
+                                        class="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white" />
+                                </div>
+                            </div>
+
+                            <!-- Opções extras -->
+                            <div class="flex items-center justify-between text-sm">
+                                <label class="flex items-center">
+                                    <input type="checkbox"
+                                        class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-0">
+                                    <span class="ml-2 text-gray-600">Lembrar de mim</span>
+                                </label>
+                                <a href="/esqueci-senha"
+                                    class="text-blue-600 hover:text-blue-700 font-medium transition-colors">
+                                    Esqueceu a senha?
+                                </a>
+                            </div>
+
+                            <!-- Botão Submit -->
+                            <button type="submit"
+                                class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                                <span>Entrar na conta</span>
+                                <span class="material-icons-outlined text-lg">arrow_forward</span>
+                            </button>
+                        </form>
+
+                        <!-- Divisor -->
+                        <div class="mt-8 pt-6 border-t border-gray-100">
+                            <p class="text-center text-gray-600">
+                                Ainda não tem uma conta?
+                                <a href="/register"
+                                    class="text-blue-600 hover:text-blue-700 font-semibold transition-colors ml-1">
+                                    Cadastre-se gratuitamente
+                                </a>
+                            </p>
+                        </div>
+
+                        <!-- Links adicionais -->
+                        <div class="mt-6 flex justify-center space-x-6 text-sm text-gray-500">
+                            <a href="/termos" class="hover:text-gray-700 transition-colors">Termos</a>
+                            <a href="/privacidade" class="hover:text-gray-700 transition-colors">Privacidade</a>
+                            <a href="/ajuda" class="hover:text-gray-700 transition-colors">Ajuda</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer informativo -->
+                <div class="text-center mt-8">
+                    <p class="text-gray-500 text-sm">
+                        🔒 Seus dados estão protegidos com criptografia de ponta
+                    </p>
+                </div>
             </div>
         </div>
 

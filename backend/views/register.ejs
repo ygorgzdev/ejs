@@ -1,83 +1,263 @@
-<!-- views/register.ejs -->
 <%- include('partials/head') %>
-    <%- include('partials/navbar') %>
+    <%- include('partials/auth-navbar') %>
 
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">Cadastro como <%= role==='investor' ? 'Investidor' : 'Desenvolvedor' %>
-                        </h4>
+        <div
+            class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4 py-12">
+            <div class="w-full max-w-md">
+                <!-- Card Principal -->
+                <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                    <!-- Header -->
+                    <div
+                        class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-8 text-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-black opacity-5"></div>
+                        <div class="relative z-10">
+                            <div
+                                class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
+                                <span class="material-icons-outlined text-white text-2xl">
+                                    <%= role==='investor' ? 'trending_up' : 'code' %>
+                                </span>
+                            </div>
+                            <h2 class="text-2xl font-bold text-white mb-2">
+                                Criar conta
+                            </h2>
+                            <p class="text-blue-100 text-sm">
+                                Cadastro como <%= role==='investor' ? 'Investidor' : 'Desenvolvedor' %>
+                            </p>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <form action="/api/auth/register" method="POST">
+
+                    <!-- Formulário -->
+                    <div class="px-8 py-8">
+                        <form action="/api/auth/register" method="POST" class="space-y-6">
                             <input type="hidden" name="role" value="<%= role %>">
 
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Nome Completo</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Senha</label>
-                                <input type="password" class="form-control" id="password" name="password" required
-                                    minlength="6">
-                                <div class="form-text">A senha deve ter pelo menos 6 caracteres.</div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="confirmPassword" class="form-label">Confirmar Senha</label>
-                                <input type="password" class="form-control" id="confirmPassword" required minlength="6">
-                                <div id="passwordError" class="invalid-feedback">
-                                    As senhas não coincidem.
+                            <!-- Campo Nome -->
+                            <div class="space-y-2">
+                                <label for="name" class="block text-sm font-semibold text-gray-700">
+                                    Nome completo
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="material-icons-outlined text-gray-400 text-lg">person</span>
+                                    </div>
+                                    <input type="text" id="name" name="name" required placeholder="Seu nome completo"
+                                        class="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white" />
                                 </div>
                             </div>
 
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary" id="submitBtn">Cadastrar</button>
+                            <!-- Campo Email -->
+                            <div class="space-y-2">
+                                <label for="email" class="block text-sm font-semibold text-gray-700">
+                                    Endereço de email
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="material-icons-outlined text-gray-400 text-lg">email</span>
+                                    </div>
+                                    <input type="email" id="email" name="email" required
+                                        placeholder="seuemail@exemplo.com"
+                                        class="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white" />
+                                </div>
                             </div>
+
+                            <!-- Campo Senha -->
+                            <div class="space-y-2">
+                                <label for="password" class="block text-sm font-semibold text-gray-700">
+                                    Senha
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="material-icons-outlined text-gray-400 text-lg">lock</span>
+                                    </div>
+                                    <input type="password" id="password" name="password" required minlength="6"
+                                        placeholder="Mínimo 6 caracteres"
+                                        class="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white" />
+                                </div>
+                                <div class="flex items-center mt-2">
+                                    <div id="passwordStrength" class="flex-1 h-1 bg-gray-200 rounded-full mr-3">
+                                        <div id="passwordStrengthBar"
+                                            class="h-1 bg-gray-300 rounded-full transition-all duration-300"
+                                            style="width: 0%"></div>
+                                    </div>
+                                    <span id="passwordStrengthText" class="text-xs text-gray-500">Muito fraca</span>
+                                </div>
+                            </div>
+
+                            <!-- Campo Confirmar Senha -->
+                            <div class="space-y-2">
+                                <label for="confirmPassword" class="block text-sm font-semibold text-gray-700">
+                                    Confirmar senha
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="material-icons-outlined text-gray-400 text-lg">lock_outline</span>
+                                    </div>
+                                    <input type="password" id="confirmPassword" required minlength="6"
+                                        placeholder="Confirme sua senha"
+                                        class="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white" />
+                                </div>
+                                <div id="passwordError" class="text-red-500 text-sm mt-1 hidden">
+                                    <span class="material-icons-outlined text-sm mr-1">error</span>
+                                    As senhas não coincidem
+                                </div>
+                                <div id="passwordMatch" class="text-green-500 text-sm mt-1 hidden">
+                                    <span class="material-icons-outlined text-sm mr-1">check_circle</span>
+                                    Senhas coincidem
+                                </div>
+                            </div>
+
+                            <!-- Termos e Condições -->
+                            <div class="flex items-start space-x-3">
+                                <input type="checkbox" id="terms" required
+                                    class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-0">
+                                <label for="terms" class="text-sm text-gray-600 leading-relaxed">
+                                    Eu aceito os
+                                    <a href="/termos" class="text-blue-600 hover:text-blue-700 font-medium">Termos de
+                                        Uso</a>
+                                    e a
+                                    <a href="/privacidade"
+                                        class="text-blue-600 hover:text-blue-700 font-medium">Política de
+                                        Privacidade</a>
+                                </label>
+                            </div>
+
+                            <!-- Botão Submit -->
+                            <button type="submit" id="submitBtn"
+                                class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                                <span>Criar minha conta</span>
+                                <span class="material-icons-outlined text-lg">arrow_forward</span>
+                            </button>
                         </form>
+
+                        <!-- Divisor -->
+                        <div class="mt-8 pt-6 border-t border-gray-100">
+                            <p class="text-center text-gray-600">
+                                Já tem uma conta?
+                                <a href="/login"
+                                    class="text-blue-600 hover:text-blue-700 font-semibold transition-colors ml-1">
+                                    Faça login
+                                </a>
+                            </p>
+                        </div>
+
+                        <!-- Toggle de Role -->
+                        <div class="mt-6 p-4 bg-gray-50 rounded-xl">
+                            <p class="text-center text-sm text-gray-600 mb-3">
+                                Quer se cadastrar como:
+                            </p>
+                            <div class="flex space-x-3">
+                                <% if (role==='developer' ) { %>
+                                    <a href="/register?role=investor"
+                                        class="flex-1 flex items-center justify-center space-x-2 py-2.5 px-4 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all duration-200">
+                                        <span class="material-icons-outlined text-lg">trending_up</span>
+                                        <span class="text-sm font-medium">Investidor</span>
+                                    </a>
+                                    <% } else { %>
+                                        <a href="/register?role=developer"
+                                            class="flex-1 flex items-center justify-center space-x-2 py-2.5 px-4 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all duration-200">
+                                            <span class="material-icons-outlined text-lg">code</span>
+                                            <span class="text-sm font-medium">Desenvolvedor</span>
+                                        </a>
+                                        <% } %>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-footer text-center">
-                        <p class="mb-0">Já tem uma conta? <a href="/login">Faça login</a></p>
-                        <% if (role==='developer' ) { %>
-                            <p class="mt-2">É um investidor? <a href="/register?role=investor">Cadastre-se como
-                                    investidor</a></p>
-                            <% } else { %>
-                                <p class="mt-2">É um desenvolvedor? <a href="/register?role=developer">Cadastre-se como
-                                        desenvolvedor</a></p>
-                                <% } %>
-                    </div>
+                </div>
+
+                <!-- Footer informativo -->
+                <div class="text-center mt-8">
+                    <p class="text-gray-500 text-sm">
+                        🔒 Seus dados estão protegidos com criptografia de ponta
+                    </p>
                 </div>
             </div>
         </div>
 
         <script>
-            // Validação de senha
             document.addEventListener('DOMContentLoaded', () => {
                 const password = document.getElementById('password');
                 const confirmPassword = document.getElementById('confirmPassword');
                 const passwordError = document.getElementById('passwordError');
+                const passwordMatch = document.getElementById('passwordMatch');
                 const submitBtn = document.getElementById('submitBtn');
+                const passwordStrengthBar = document.getElementById('passwordStrengthBar');
+                const passwordStrengthText = document.getElementById('passwordStrengthText');
 
-                function validatePassword() {
-                    if (password.value !== confirmPassword.value) {
-                        confirmPassword.classList.add('is-invalid');
-                        passwordError.style.display = 'block';
-                        submitBtn.disabled = true;
-                    } else {
-                        confirmPassword.classList.remove('is-invalid');
-                        passwordError.style.display = 'none';
-                        submitBtn.disabled = false;
+                // Validação de força da senha
+                function checkPasswordStrength(password) {
+                    let strength = 0;
+                    let text = 'Muito fraca';
+                    let color = '#ef4444';
+
+                    if (password.length >= 6) strength += 1;
+                    if (password.length >= 8) strength += 1;
+                    if (/[a-z]/.test(password)) strength += 1;
+                    if (/[A-Z]/.test(password)) strength += 1;
+                    if (/[0-9]/.test(password)) strength += 1;
+                    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+
+                    switch (strength) {
+                        case 0:
+                        case 1:
+                            text = 'Muito fraca';
+                            color = '#ef4444';
+                            break;
+                        case 2:
+                        case 3:
+                            text = 'Fraca';
+                            color = '#f97316';
+                            break;
+                        case 4:
+                            text = 'Média';
+                            color = '#eab308';
+                            break;
+                        case 5:
+                            text = 'Forte';
+                            color = '#22c55e';
+                            break;
+                        case 6:
+                            text = 'Muito forte';
+                            color = '#16a34a';
+                            break;
                     }
+
+                    const percentage = (strength / 6) * 100;
+                    passwordStrengthBar.style.width = `${percentage}%`;
+                    passwordStrengthBar.style.backgroundColor = color;
+                    passwordStrengthText.textContent = text;
+                    passwordStrengthText.style.color = color;
                 }
 
-                password.addEventListener('input', validatePassword);
+                // Validação de senhas iguais
+                function validatePassword() {
+                    const isValid = password.value === confirmPassword.value && password.value.length >= 6;
+
+                    if (confirmPassword.value.length > 0) {
+                        if (password.value === confirmPassword.value) {
+                            confirmPassword.classList.remove('border-red-300');
+                            confirmPassword.classList.add('border-green-300');
+                            passwordError.classList.add('hidden');
+                            passwordMatch.classList.remove('hidden');
+                        } else {
+                            confirmPassword.classList.remove('border-green-300');
+                            confirmPassword.classList.add('border-red-300');
+                            passwordError.classList.remove('hidden');
+                            passwordMatch.classList.add('hidden');
+                        }
+                    } else {
+                        confirmPassword.classList.remove('border-red-300', 'border-green-300');
+                        passwordError.classList.add('hidden');
+                        passwordMatch.classList.add('hidden');
+                    }
+
+                    submitBtn.disabled = !isValid;
+                }
+
+                password.addEventListener('input', (e) => {
+                    checkPasswordStrength(e.target.value);
+                    validatePassword();
+                });
+
                 confirmPassword.addEventListener('input', validatePassword);
             });
         </script>
