@@ -186,5 +186,224 @@
                                                 </button>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
 
-                                        <!--
+                        <!-- Mensagem quando não há projetos -->
+                        <div x-show="projetosFiltrados.length === 0" class="text-center py-16">
+                            <div class="text-gray-400 mb-4">
+                                <span class="material-icons-outlined text-6xl">search_off</span>
+                            </div>
+                            <h3 class="text-xl font-medium text-gray-600 mb-2">Nenhum projeto encontrado</h3>
+                            <p class="text-gray-500">Tente ajustar os filtros ou a busca para encontrar projetos.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CTA Section -->
+                <section class="bg-gradient-to-r from-indigo-600 to-blue-700 text-white py-16">
+                    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                            Tem um projeto inovador?
+                        </h2>
+                        <p class="text-xl mb-8">
+                            Publique seu projeto e conecte-se com investidores interessados em tecnologia
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="/register?role=developer"
+                                class="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                                Publicar Projeto
+                            </a>
+                            <a href="/register?role=investor"
+                                class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition-colors">
+                                Quero Investir
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <%- include('partials/footer') %>
+    </div>
+
+    <script>
+        function projetosData() {
+            return {
+                busca: '',
+                filtroCategoria: 'todos',
+                filtroValor: 'todos',
+                projetos: [
+                    {
+                        id: 1,
+                        nome: 'GreenTrack',
+                        categoria: 'web',
+                        descricao: 'Plataforma para rastreamento de pegada de carbono empresarial com relatórios automáticos e sugestões de melhorias.',
+                        investimentoNecessario: 'R$ 120K',
+                        valorNumerico: 120000,
+                        progresso: 65,
+                        prazo: '4 meses',
+                        tecnologias: ['React', 'Node.js', 'PostgreSQL', 'Chart.js', 'AWS'],
+                        developer: {
+                            nome: 'Lucas Ferreira',
+                            iniciais: 'LF',
+                            experiencia: '5 anos de experiência'
+                        }
+                    },
+                    {
+                        id: 2,
+                        nome: 'MindfulAI',
+                        categoria: 'ai',
+                        descricao: 'Aplicativo de meditação com IA que personaliza sessões baseadas no estado emocional do usuário.',
+                        investimentoNecessario: 'R$ 80K',
+                        valorNumerico: 80000,
+                        progresso: 45,
+                        prazo: '6 meses',
+                        tecnologias: ['React Native', 'Python', 'TensorFlow', 'MongoDB'],
+                        developer: {
+                            nome: 'Sophia Chen',
+                            iniciais: 'SC',
+                            experiencia: '3 anos de experiência'
+                        }
+                    },
+                    {
+                        id: 3,
+                        nome: 'CryptoWallet Pro',
+                        categoria: 'blockchain',
+                        descricao: 'Carteira multi-criptomoedas com recursos avançados de DeFi e staking automático.',
+                        investimentoNecessario: 'R$ 300K',
+                        valorNumerico: 300000,
+                        progresso: 30,
+                        prazo: '8 meses',
+                        tecnologias: ['Solidity', 'Web3.js', 'React', 'Node.js', 'MetaMask'],
+                        developer: {
+                            nome: 'Ricardo Alves',
+                            iniciais: 'RA',
+                            experiencia: '7 anos de experiência'
+                        }
+                    },
+                    {
+                        id: 4,
+                        nome: 'FoodMatcher',
+                        categoria: 'mobile',
+                        descricao: 'App que conecta pessoas com restrições alimentares a restaurantes e receitas adequadas.',
+                        investimentoNecessario: 'R$ 45K',
+                        valorNumerico: 45000,
+                        progresso: 75,
+                        prazo: '3 meses',
+                        tecnologias: ['Flutter', 'Firebase', 'Google Maps API'],
+                        developer: {
+                            nome: 'Camila Rodrigues',
+                            iniciais: 'CR',
+                            experiencia: '4 anos de experiência'
+                        }
+                    },
+                    {
+                        id: 5,
+                        nome: 'SmartAnalytics',
+                        categoria: 'ai',
+                        descricao: 'Plataforma de análise de dados com IA para pequenas e médias empresas.',
+                        investimentoNecessario: 'R$ 180K',
+                        valorNumerico: 180000,
+                        progresso: 55,
+                        prazo: '5 meses',
+                        tecnologias: ['Python', 'Django', 'TensorFlow', 'D3.js', 'PostgreSQL'],
+                        developer: {
+                            nome: 'Daniel Santos',
+                            iniciais: 'DS',
+                            experiencia: '6 anos de experiência'
+                        }
+                    },
+                    {
+                        id: 6,
+                        nome: 'VirtualOfficeVR',
+                        categoria: 'web',
+                        descricao: 'Ambiente de escritório virtual em realidade aumentada para trabalho remoto.',
+                        investimentoNecessario: 'R$ 250K',
+                        valorNumerico: 250000,
+                        progresso: 40,
+                        prazo: '10 meses',
+                        tecnologias: ['Unity', 'WebXR', 'Node.js', 'Socket.io'],
+                        developer: {
+                            nome: 'Fernanda Lima',
+                            iniciais: 'FL',
+                            experiencia: '8 anos de experiência'
+                        }
+                    },
+                    {
+                        id: 7,
+                        nome: 'PetCareApp',
+                        categoria: 'mobile',
+                        descricao: 'Aplicativo completo para cuidados de pets com agenda veterinária e lembretes.',
+                        investimentoNecessario: 'R$ 35K',
+                        valorNumerico: 35000,
+                        progresso: 80,
+                        prazo: '2 meses',
+                        tecnologias: ['React Native', 'Firebase', 'Stripe'],
+                        developer: {
+                            nome: 'André Oliveira',
+                            iniciais: 'AO',
+                            experiencia: '3 anos de experiência'
+                        }
+                    },
+                    {
+                        id: 8,
+                        nome: 'EcoChain',
+                        categoria: 'blockchain',
+                        descricao: 'Blockchain para rastreabilidade de produtos sustentáveis e certificação ambiental.',
+                        investimentoNecessario: 'R$ 400K',
+                        valorNumerico: 400000,
+                        progresso: 25,
+                        prazo: '12 meses',
+                        tecnologias: ['Ethereum', 'Solidity', 'IPFS', 'React', 'Web3'],
+                        developer: {
+                            nome: 'Marcos Silva',
+                            iniciais: 'MS',
+                            experiencia: '9 anos de experiência'
+                        }
+                    }
+                ],
+                get projetosFiltrados() {
+                    let filtrados = this.projetos;
+
+                    // Filtro por busca
+                    if (this.busca.trim() !== '') {
+                        filtrados = filtrados.filter(projeto =>
+                            projeto.nome.toLowerCase().includes(this.busca.toLowerCase()) ||
+                            projeto.descricao.toLowerCase().includes(this.busca.toLowerCase()) ||
+                            projeto.tecnologias.some(tech => tech.toLowerCase().includes(this.busca.toLowerCase()))
+                        );
+                    }
+
+                    // Filtro por categoria
+                    if (this.filtroCategoria !== 'todos') {
+                        filtrados = filtrados.filter(projeto => projeto.categoria === this.filtroCategoria);
+                    }
+
+                    // Filtro por valor
+                    if (this.filtroValor !== 'todos') {
+                        filtrados = filtrados.filter(projeto => {
+                            const valor = projeto.valorNumerico;
+                            switch (this.filtroValor) {
+                                case 'ate50k':
+                                    return valor <= 50000;
+                                case '50k-200k':
+                                    return valor > 50000 && valor <= 200000;
+                                case 'acima200k':
+                                    return valor > 200000;
+                                default:
+                                    return true;
+                            }
+                        });
+                    }
+
+                    return filtrados;
+                }
+            };
+        }
+    </script>
+
+    </body>
+
+    </html>
