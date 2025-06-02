@@ -1,0 +1,266 @@
+<%- include('partials/head', { title: 'Cases de Sucesso' }) %>
+
+    <div x-data="destaquesData()" class="min-h-screen flex flex-col">
+        <%- include('partials/navbar', { user: typeof user !=='undefined' ? user : null }) %>
+
+            <main class="flex-grow">
+                <!-- Hero Section -->
+                <section class="bg-gradient-to-r from-green-600 to-blue-600 text-white py-16">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                        <h1 class="text-4xl md:text-5xl font-bold mb-6">
+                            Cases de <span class="text-green-300">Sucesso</span>
+                        </h1>
+                        <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                            Conheça projetos que saíram do papel e se tornaram realidade através da nossa plataforma
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                            <div class="bg-white/20 px-6 py-3 rounded-lg backdrop-blur-sm">
+                                <span class="text-2xl font-bold">R$ 12M+</span>
+                                <p class="text-sm">Investimentos realizados</p>
+                            </div>
+                            <div class="bg-white/20 px-6 py-3 rounded-lg backdrop-blur-sm">
+                                <span class="text-2xl font-bold">150+</span>
+                                <p class="text-sm">Projetos financiados</p>
+                            </div>
+                            <div class="bg-white/20 px-6 py-3 rounded-lg backdrop-blur-sm">
+                                <span class="text-2xl font-bold">95%</span>
+                                <p class="text-sm">Taxa de sucesso</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Filtros -->
+                <section class="py-8 bg-gray-50">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="flex flex-wrap gap-4 justify-center">
+                            <button @click="filtroAtivo = 'todos'"
+                                :class="filtroAtivo === 'todos' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'"
+                                class="px-6 py-2 rounded-full border transition-colors font-medium">
+                                Todos
+                            </button>
+                            <button @click="filtroAtivo = 'startup'"
+                                :class="filtroAtivo === 'startup' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'"
+                                class="px-6 py-2 rounded-full border transition-colors font-medium">
+                                Startups
+                            </button>
+                            <button @click="filtroAtivo = 'app'"
+                                :class="filtroAtivo === 'app' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'"
+                                class="px-6 py-2 rounded-full border transition-colors font-medium">
+                                Apps
+                            </button>
+                            <button @click="filtroAtivo = 'web'"
+                                :class="filtroAtivo = 'web' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'"
+                                class="px-6 py-2 rounded-full border transition-colors font-medium">
+                                Plataformas Web
+                            </button>
+                            <button @click="filtroAtivo = 'ecommerce'"
+                                :class="filtroAtivo === 'ecommerce' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'"
+                                class="px-6 py-2 rounded-full border transition-colors font-medium">
+                                E-commerce
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Grid de Cases -->
+                <section class="py-16">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <template x-for="case_item in casesFiltrados" :key="case_item.id">
+                                <div
+                                    class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                                    <!-- Imagem do projeto -->
+                                    <div
+                                        class="h-48 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-black/20"></div>
+                                        <div class="absolute bottom-4 left-4">
+                                            <span
+                                                class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                                                ✓ Financiado
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Conteúdo -->
+                                    <div class="p-6">
+                                        <h3 class="text-xl font-bold text-gray-900 mb-2" x-text="case_item.nome"></h3>
+                                        <p class="text-gray-600 mb-4 line-clamp-3" x-text="case_item.descricao"></p>
+
+                                        <!-- Métricas -->
+                                        <div class="grid grid-cols-2 gap-4 mb-4">
+                                            <div class="text-center bg-gray-50 rounded-lg py-2">
+                                                <div class="text-lg font-bold text-green-600"
+                                                    x-text="case_item.investimento"></div>
+                                                <div class="text-xs text-gray-500">Investimento</div>
+                                            </div>
+                                            <div class="text-center bg-gray-50 rounded-lg py-2">
+                                                <div class="text-lg font-bold text-blue-600" x-text="case_item.retorno">
+                                                </div>
+                                                <div class="text-xs text-gray-500">ROI</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Tags de tecnologia -->
+                                        <div class="flex flex-wrap gap-2 mb-4">
+                                            <template x-for="tech in case_item.tecnologias" :key="tech">
+                                                <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+                                                    x-text="tech"></span>
+                                            </template>
+                                        </div>
+
+                                        <!-- Developer info -->
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-2">
+                                                <div
+                                                    class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                                                    <span class="text-sm font-medium"
+                                                        x-text="case_item.developer.iniciais"></span>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-900"
+                                                        x-text="case_item.developer.nome"></p>
+                                                    <p class="text-xs text-gray-500"
+                                                        x-text="case_item.tempoDesenvolvimento"></p>
+                                                </div>
+                                            </div>
+                                            <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                                Ver Case →
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CTA Section -->
+                <section class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
+                    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                            Transforme sua ideia no próximo case de sucesso
+                        </h2>
+                        <p class="text-xl mb-8">
+                            Junte-se a centenas de desenvolvedores que já encontraram investimento para seus projetos
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="/register?role=developer"
+                                class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                                Sou Desenvolvedor
+                            </a>
+                            <a href="/register?role=investor"
+                                class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                                Sou Investidor
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <%- include('partials/footer') %>
+    </div>
+
+    <script>
+        function destaquesData() {
+            return {
+                filtroAtivo: 'todos',
+                cases: [
+                    {
+                        id: 1,
+                        nome: 'EcoDelivery',
+                        categoria: 'startup',
+                        descricao: 'Plataforma de delivery sustentável que conecta restaurantes locais com entregadores que usam bicicletas elétricas.',
+                        investimento: 'R$ 250K',
+                        retorno: '+180%',
+                        tecnologias: ['React', 'Node.js', 'MongoDB', 'React Native'],
+                        developer: {
+                            nome: 'Marina Silva',
+                            iniciais: 'MS'
+                        },
+                        tempoDesenvolvimento: '8 meses'
+                    },
+                    {
+                        id: 2,
+                        nome: 'HealthTracker Pro',
+                        categoria: 'app',
+                        descricao: 'Aplicativo de monitoramento de saúde que integra com dispositivos wearables e oferece insights personalizados.',
+                        investimento: 'R$ 180K',
+                        retorno: '+220%',
+                        tecnologias: ['Flutter', 'Python', 'TensorFlow', 'AWS'],
+                        developer: {
+                            nome: 'Carlos Eduardo',
+                            iniciais: 'CE'
+                        },
+                        tempoDesenvolvimento: '6 meses'
+                    },
+                    {
+                        id: 3,
+                        nome: 'EduConnect',
+                        categoria: 'web',
+                        descricao: 'Plataforma que conecta professores particulares com alunos, incluindo sistema de pagamento e videoconferência.',
+                        investimento: 'R$ 320K',
+                        retorno: '+150%',
+                        tecnologias: ['Vue.js', 'Laravel', 'PostgreSQL', 'WebRTC'],
+                        developer: {
+                            nome: 'Ana Costa',
+                            iniciais: 'AC'
+                        },
+                        tempoDesenvolvimento: '10 meses'
+                    },
+                    {
+                        id: 4,
+                        nome: 'LocalMarket',
+                        categoria: 'ecommerce',
+                        descricao: 'Marketplace focado em produtos locais e artesanais, com sistema de logística otimizada para pequenos produtores.',
+                        investimento: 'R$ 420K',
+                        retorno: '+190%',
+                        tecnologias: ['Next.js', 'Strapi', 'Stripe', 'Docker'],
+                        developer: {
+                            nome: 'Rafael Santos',
+                            iniciais: 'RS'
+                        },
+                        tempoDesenvolvimento: '12 meses'
+                    },
+                    {
+                        id: 5,
+                        nome: 'SmartHome Hub',
+                        categoria: 'startup',
+                        descricao: 'Central inteligente para automação residencial compatível com múltiplos protocolos IoT.',
+                        investimento: 'R$ 380K',
+                        retorno: '+200%',
+                        tecnologias: ['React', 'Node.js', 'IoT', 'Raspberry Pi'],
+                        developer: {
+                            nome: 'Pedro Oliveira',
+                            iniciais: 'PO'
+                        },
+                        tempoDesenvolvimento: '14 meses'
+                    },
+                    {
+                        id: 6,
+                        nome: 'FinanceAI',
+                        categoria: 'web',
+                        descricao: 'Plataforma de gestão financeira pessoal com inteligência artificial para sugestões de investimento.',
+                        investimento: 'R$ 280K',
+                        retorno: '+175%',
+                        tecnologias: ['Angular', 'Python', 'TensorFlow', 'PostgreSQL'],
+                        developer: {
+                            nome: 'Julia Fernandes',
+                            iniciais: 'JF'
+                        },
+                        tempoDesenvolvimento: '9 meses'
+                    }
+                ],
+                get casesFiltrados() {
+                    if (this.filtroAtivo === 'todos') {
+                        return this.cases;
+                    }
+                    return this.cases.filter(case_item => case_item.categoria === this.filtroAtivo);
+                }
+            };
+        }
+    </script>
+
+    </body>
+
+    </html>

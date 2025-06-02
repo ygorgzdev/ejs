@@ -10,6 +10,20 @@ router.get('/', (req, res) => {
   });
 });
 
+// Página de destaques (cases de sucesso)
+router.get('/destaques', (req, res) => {
+  res.render('destaques', {
+    title: 'Cases de Sucesso - IncubePro'
+  });
+});
+
+// Página de projetos em andamento (antes do login)
+router.get('/projetos', (req, res) => {
+  res.render('projetos', {
+    title: 'Projetos em Andamento - IncubePro'
+  });
+});
+
 // Página de login
 router.get('/login', (req, res) => {
   const registered = req.query.registered === 'true';
@@ -51,13 +65,6 @@ router.get('/logout', (req, res) => {
 
   // Redirecionar para login
   res.redirect('/login');
-});
-
-// Rota para visualizar todos os projetos
-router.get('/projects', (req, res) => {
-  res.render('projects', {
-    title: 'Projetos - IncubePro'
-  });
 });
 
 // IMPORTANTE: Rotas específicas ANTES da rota com parâmetro dinâmico (:id)
