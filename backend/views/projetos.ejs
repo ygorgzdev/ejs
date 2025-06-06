@@ -103,23 +103,21 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             <template x-for="projeto in projetosFiltrados" :key="projeto.id">
                                 <div
-                                    class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                                    <!-- Status Badge -->
-                                    <div class="relative">
-                                        <div
-                                            class="h-48 bg-gradient-to-br from-indigo-400 via-blue-500 to-purple-600 relative overflow-hidden">
-                                            <div class="absolute inset-0 bg-black/10"></div>
-                                            <div class="absolute top-4 left-4">
-                                                <span
-                                                    class="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                                                    🚀 Buscando Investimento
-                                                </span>
-                                            </div>
-                                            <div class="absolute top-4 right-4">
-                                                <span
-                                                    class="bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs"
-                                                    x-text="projeto.progresso + '% concluído'"></span>
-                                            </div>
+                                    class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105">
+                                    <!-- Header com logo SVG -->
+                                    <div class="h-48 relative overflow-hidden flex items-center justify-center"
+                                        :style="`background: ${projeto.background}`">
+                                        <div x-html="projeto.logo" class="z-10"></div>
+                                        <div class="absolute top-4 left-4 z-30">
+                                            <span
+                                                class="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                                                🚀 Buscando Investimento
+                                            </span>
+                                        </div>
+                                        <div class="absolute top-4 right-4 z-30">
+                                            <span
+                                                class="bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs"
+                                                x-text="projeto.progresso + '% concluído'"></span>
                                         </div>
                                     </div>
 
@@ -249,7 +247,18 @@
                             nome: 'Lucas Ferreira',
                             iniciais: 'LF',
                             experiencia: '5 anos de experiência'
-                        }
+                        },
+                        background: 'linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%)',
+                        logo: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="40" cy="40" r="35" fill="white" opacity="0.15"/>
+                            <path d="M40 15C30 15 25 25 25 35C25 50 40 65 40 65C40 65 55 50 55 35C55 25 50 15 40 15Z" fill="white"/>
+                            <circle cx="40" cy="35" r="8" fill="#059669"/>
+                            <path d="M30 50L35 45L40 50L45 45L50 50" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="20" cy="25" r="3" fill="#6ee7b7"/>
+                            <circle cx="60" cy="55" r="3" fill="#6ee7b7"/>
+                            <path d="M15 40C20 35 25 40 25 40M55 40C55 40 60 45 65 40" stroke="#a7f3d0" stroke-width="2"/>
+                            <text x="40" y="75" text-anchor="middle" fill="white" font-size="6" font-weight="bold">GREEN</text>
+                        </svg>`
                     },
                     {
                         id: 2,
@@ -265,7 +274,21 @@
                             nome: 'Sophia Chen',
                             iniciais: 'SC',
                             experiencia: '3 anos de experiência'
-                        }
+                        },
+                        background: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #c084fc 100%)',
+                        logo: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="40" cy="40" r="35" fill="white" opacity="0.15"/>
+                            <circle cx="40" cy="35" r="15" stroke="white" stroke-width="3" fill="none"/>
+                            <path d="M35 30C35 30 40 25 45 30" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="35" cy="35" r="2" fill="white"/>
+                            <circle cx="45" cy="35" r="2" fill="white"/>
+                            <path d="M33 42C35 45 37 45 40 45C43 45 45 45 47 42" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M20 30L25 35L20 40" stroke="#d8b4fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M60 30L55 35L60 40" stroke="#d8b4fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="40" cy="55" r="8" stroke="white" stroke-width="2" fill="none"/>
+                            <circle cx="40" cy="55" r="3" fill="#a855f7"/>
+                            <text x="40" y="75" text-anchor="middle" fill="white" font-size="6" font-weight="bold">MIND</text>
+                        </svg>`
                     },
                     {
                         id: 3,
@@ -281,7 +304,23 @@
                             nome: 'Ricardo Alves',
                             iniciais: 'RA',
                             experiencia: '7 anos de experiência'
-                        }
+                        },
+                        background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 50%, #fb923c 100%)',
+                        logo: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="40" cy="40" r="35" fill="white" opacity="0.15"/>
+                            <rect x="25" y="30" width="30" height="20" rx="5" fill="white"/>
+                            <circle cx="40" cy="40" r="6" fill="#f59e0b"/>
+                            <path d="M40 34V46M37 37L43 43M43 37L37 43" stroke="white" stroke-width="1.5"/>
+                            <rect x="30" y="25" width="20" height="4" rx="2" fill="white"/>
+                            <circle cx="20" cy="20" r="3" fill="#fed7aa"/>
+                            <circle cx="60" cy="60" r="3" fill="#fed7aa"/>
+                            <path d="M15 35L20 40L15 45" stroke="#fde68a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M65 35L60 40L65 45" stroke="#fde68a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <rect x="32" y="52" width="16" height="8" rx="2" fill="white"/>
+                            <circle cx="36" cy="56" r="1" fill="#f59e0b"/>
+                            <circle cx="44" cy="56" r="1" fill="#f59e0b"/>
+                            <text x="40" y="72" text-anchor="middle" fill="white" font-size="6" font-weight="bold">CRYPTO</text>
+                        </svg>`
                     },
                     {
                         id: 4,
@@ -297,7 +336,22 @@
                             nome: 'Camila Rodrigues',
                             iniciais: 'CR',
                             experiencia: '4 anos de experiência'
-                        }
+                        },
+                        background: 'linear-gradient(135deg, #ef4444 0%, #f97316 50%, #eab308 100%)',
+                        logo: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="40" cy="40" r="35" fill="white" opacity="0.15"/>
+                            <circle cx="40" cy="40" r="18" fill="white"/>
+                            <path d="M32 35C32 35 35 30 40 35C45 30 48 35 48 35" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="35" cy="38" r="2" fill="#ef4444"/>
+                            <circle cx="45" cy="38" r="2" fill="#ef4444"/>
+                            <path d="M32 45C35 48 40 48 40 48C40 48 45 48 48 45" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M25 25L30 30L25 35" stroke="#fca5a5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M55 25L50 30L55 35" stroke="#fca5a5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="20" cy="50" r="3" fill="#fed7aa"/>
+                            <circle cx="60" cy="30" r="3" fill="#fed7aa"/>
+                            <path d="M30 55L35 60L40 55L45 60L50 55" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            <text x="40" y="72" text-anchor="middle" fill="white" font-size="6" font-weight="bold">FOOD</text>
+                        </svg>`
                     },
                     {
                         id: 5,
@@ -313,7 +367,24 @@
                             nome: 'Daniel Santos',
                             iniciais: 'DS',
                             experiencia: '6 anos de experiência'
-                        }
+                        },
+                        background: 'linear-gradient(135deg, #06b6d4 0%, #0ea5e9 50%, #38bdf8 100%)',
+                        logo: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="40" cy="40" r="35" fill="white" opacity="0.15"/>
+                            <rect x="25" y="25" width="30" height="30" rx="4" fill="white"/>
+                            <path d="M30 45L35 35L40 40L45 30L50 35" stroke="#06b6d4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="35" cy="35" r="2" fill="#06b6d4"/>
+                            <circle cx="40" cy="40" r="2" fill="#06b6d4"/>
+                            <circle cx="45" cy="30" r="2" fill="#06b6d4"/>
+                            <circle cx="50" cy="35" r="2" fill="#06b6d4"/>
+                            <rect x="30" y="48" width="4" height="4" fill="#67e8f9"/>
+                            <rect x="38" y="48" width="4" height="4" fill="#67e8f9"/>
+                            <rect x="46" y="48" width="4" height="4" fill="#67e8f9"/>
+                            <circle cx="15" cy="25" r="2" fill="#a5f3fc"/>
+                            <circle cx="65" cy="55" r="2" fill="#a5f3fc"/>
+                            <path d="M20 35C25 30 30 35 30 35M50 45C50 45 55 50 60 45" stroke="#a5f3fc" stroke-width="2"/>
+                            <text x="40" y="72" text-anchor="middle" fill="white" font-size="6" font-weight="bold">ANALYTICS</text>
+                        </svg>`
                     },
                     {
                         id: 6,
@@ -329,39 +400,154 @@
                             nome: 'Fernanda Lima',
                             iniciais: 'FL',
                             experiencia: '8 anos de experiência'
-                        }
+                        },
+                        background: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #c084fc 100%)',
+                        // Continuação do SVG do VirtualOfficeVR (que estava incompleto)
+                        logo: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="40" cy="40" r="35" fill="white" opacity="0.15"/>
+                            <rect x="25" y="30" width="30" height="25" rx="3" fill="white"/>
+                            <rect x="30" y="35" width="20" height="15" rx="2" fill="#8b5cf6"/>
+                            <circle cx="35" cy="42" r="2" fill="white"/>
+                            <circle cx="45" cy="42" r="2" fill="white"/>
+                            <rect x="38" y="46" width="4" height="2" fill="white"/>
+                            <path d="M20 35L25 40L20 45" stroke="#ddd6fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M60 35L55 40L60 45" stroke="#ddd6fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="15" cy="20" r="3" fill="#e9d5ff"/>
+                            <circle cx="65" cy="60" r="3" fill="#e9d5ff"/>
+                            <path d="M30 20C35 15 40 20 40 20C40 20 45 15 50 20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            <rect x="35" y="57" width="10" height="3" rx="1" fill="white"/>
+                            <text x="40" y="72" text-anchor="middle" fill="white" font-size="6" font-weight="bold">VR</text>
+                        </svg>`
                     },
                     {
                         id: 7,
-                        nome: 'PetCareApp',
+                        nome: 'EcoDelivery',
                         categoria: 'mobile',
-                        descricao: 'Aplicativo completo para cuidados de pets com agenda veterinária e lembretes.',
-                        investimentoNecessario: 'R$ 35K',
-                        valorNumerico: 35000,
-                        progresso: 80,
-                        prazo: '2 meses',
-                        tecnologias: ['React Native', 'Firebase', 'Stripe'],
+                        descricao: 'Plataforma de delivery sustentável que prioriza transporte ecológico e embalagens biodegradáveis.',
+                        investimentoNecessario: 'R$ 90K',
+                        valorNumerico: 90000,
+                        progresso: 60,
+                        prazo: '4 meses',
+                        tecnologias: ['React Native', 'Node.js', 'MongoDB', 'Stripe'],
                         developer: {
-                            nome: 'André Oliveira',
-                            iniciais: 'AO',
-                            experiencia: '3 anos de experiência'
-                        }
+                            nome: 'Pedro Oliveira',
+                            iniciais: 'PO',
+                            experiencia: '5 anos de experiência'
+                        },
+                        background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%)',
+                        logo: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="40" cy="40" r="35" fill="white" opacity="0.15"/>
+                            <path d="M25 45C25 45 30 40 40 45C50 40 55 45 55 45L50 55C45 50 40 52 40 52C40 52 35 50 30 55L25 45Z" fill="white"/>
+                            <circle cx="32" cy="48" r="2" fill="#22c55e"/>
+                            <circle cx="48" cy="48" r="2" fill="#22c55e"/>
+                            <path d="M35 52C37 54 40 54 40 54C40 54 43 54 45 52" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="30" cy="35" r="3" stroke="white" stroke-width="2" fill="none"/>
+                            <circle cx="50" cy="35" r="3" stroke="white" stroke-width="2" fill="none"/>
+                            <path d="M30 32V38M50 32V38M28 35H32M48 35H52" stroke="white" stroke-width="1.5"/>
+                            <path d="M15 30L20 35L15 40" stroke="#86efac" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M65 30L60 35L65 40" stroke="#86efac" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="20" cy="20" r="2" fill="#bbf7d0"/>
+                            <circle cx="60" cy="60" r="2" fill="#bbf7d0"/>
+                            <text x="40" y="72" text-anchor="middle" fill="white" font-size="6" font-weight="bold">ECO</text>
+                        </svg>`
                     },
                     {
                         id: 8,
-                        nome: 'EcoChain',
+                        nome: 'HealthTracker AI',
+                        categoria: 'ai',
+                        descricao: 'Assistente de saúde com IA que monitora sinais vitais e sugere melhorias no estilo de vida.',
+                        investimentoNecessario: 'R$ 150K',
+                        valorNumerico: 150000,
+                        progresso: 35,
+                        prazo: '7 meses',
+                        tecnologias: ['Python', 'TensorFlow', 'React', 'FastAPI', 'IoT'],
+                        developer: {
+                            nome: 'Marina Costa',
+                            iniciais: 'MC',
+                            experiencia: '4 anos de experiência'
+                        },
+                        background: 'linear-gradient(135deg, #ec4899 0%, #f472b6 50%, #f9a8d4 100%)',
+                        logo: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="40" cy="40" r="35" fill="white" opacity="0.15"/>
+                            <path d="M30 35C30 30 35 25 40 25C45 25 50 30 50 35C50 40 45 45 40 50C35 45 30 40 30 35Z" fill="white"/>
+                            <circle cx="40" cy="35" r="3" fill="#ec4899"/>
+                            <path d="M25 40L30 45L25 50" stroke="#fce7f3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M55 40L50 45L55 50" stroke="#fce7f3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M35 55L40 60L45 55" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="20" cy="25" r="2" fill="#fbcfe8"/>
+                            <circle cx="60" cy="55" r="2" fill="#fbcfe8"/>
+                            <path d="M40 15C42 17 42 20 40 22C38 20 38 17 40 15" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            <rect x="37" y="52" width="6" height="8" rx="1" fill="white"/>
+                            <circle cx="39" cy="55" r="1" fill="#ec4899"/>
+                            <circle cx="41" cy="57" r="1" fill="#ec4899"/>
+                            <text x="40" y="72" text-anchor="middle" fill="white" font-size="6" font-weight="bold">HEALTH</text>
+                        </svg>`
+                    },
+                    {
+                        id: 9,
+                        nome: 'BlockchainVoting',
                         categoria: 'blockchain',
-                        descricao: 'Blockchain para rastreabilidade de produtos sustentáveis e certificação ambiental.',
+                        descricao: 'Sistema de votação eletrônica seguro baseado em blockchain para eleições e decisões corporativas.',
                         investimentoNecessario: 'R$ 400K',
                         valorNumerico: 400000,
-                        progresso: 25,
+                        progresso: 20,
                         prazo: '12 meses',
-                        tecnologias: ['Ethereum', 'Solidity', 'IPFS', 'React', 'Web3'],
+                        tecnologias: ['Solidity', 'Ethereum', 'Web3.js', 'React', 'IPFS'],
                         developer: {
-                            nome: 'Marcos Silva',
-                            iniciais: 'MS',
-                            experiencia: '9 anos de experiência'
-                        }
+                            nome: 'Gabriel Mendes',
+                            iniciais: 'GM',
+                            experiencia: '6 anos de experiência'
+                        },
+                        background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%)',
+                        logo: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="40" cy="40" r="35" fill="white" opacity="0.15"/>
+                            <rect x="25" y="25" width="30" height="35" rx="3" fill="white"/>
+                            <rect x="30" y="30" width="20" height="4" rx="1" fill="#1e40af"/>
+                            <rect x="30" y="38" width="20" height="4" rx="1" fill="#3b82f6"/>
+                            <rect x="30" y="46" width="20" height="4" rx="1" fill="#60a5fa"/>
+                            <circle cx="35" cy="54" r="2" stroke="#1e40af" stroke-width="2" fill="none"/>
+                            <path d="M33 54L34 55L37 52" stroke="#1e40af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="45" cy="54" r="2" stroke="#3b82f6" stroke-width="2" fill="none"/>
+                            <path d="M15 30L20 35L15 40" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M65 30L60 35L65 40" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="20" cy="50" r="2" fill="#dbeafe"/>
+                            <circle cx="60" cy="20" r="2" fill="#dbeafe"/>
+                            <path d="M30 15C35 12 40 15 40 15C40 15 45 12 50 15" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            <text x="40" y="72" text-anchor="middle" fill="white" font-size="6" font-weight="bold">VOTE</text>
+                        </svg>`
+                    },
+                    {
+                        id: 10,
+                        nome: 'SmartHome Hub',
+                        categoria: 'web',
+                        descricao: 'Central de controle inteligente para automação residencial com integração IoT e controle por voz.',
+                        investimentoNecessario: 'R$ 200K',
+                        valorNumerico: 200000,
+                        progresso: 50,
+                        prazo: '6 meses',
+                        tecnologias: ['Vue.js', 'Node.js', 'MQTT', 'Arduino', 'Alexa SDK'],
+                        developer: {
+                            nome: 'Ana Silva',
+                            iniciais: 'AS',
+                            experiencia: '7 anos de experiência'
+                        },
+                        background: 'linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #5eead4 100%)',
+                        logo: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="40" cy="40" r="35" fill="white" opacity="0.15"/>
+                            <path d="M25 45L40 25L55 45V55C55 57 53 59 51 59H29C27 59 25 57 25 55V45Z" fill="white"/>
+                            <rect x="35" y="45" width="10" height="12" fill="#0d9488"/>
+                            <rect x="30" y="35" width="6" height="8" fill="#14b8a6"/>
+                            <rect x="44" y="35" width="6" height="8" fill="#14b8a6"/>
+                            <circle cx="33" cy="37" r="1" fill="white"/>
+                            <circle cx="47" cy="37" r="1" fill="white"/>
+                            <circle cx="38" cy="48" r="1" fill="white"/>
+                            <circle cx="42" cy="48" r="1" fill="white"/>
+                            <path d="M20 35C25 30 30 35 30 35M50 35C50 35 55 30 60 35" stroke="#a7f3d0" stroke-width="2"/>
+                            <circle cx="15" cy="25" r="2" fill="#ccfbf1"/>
+                            <circle cx="65" cy="55" r="2" fill="#ccfbf1"/>
+                            <path d="M35 20L40 15L45 20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <text x="40" y="72" text-anchor="middle" fill="white" font-size="6" font-weight="bold">HOME</text>
+                        </svg>`
                     }
                 ],
                 get projetosFiltrados() {
@@ -369,10 +555,12 @@
 
                     // Filtro por busca
                     if (this.busca.trim() !== '') {
+                        const termoBusca = this.busca.toLowerCase();
                         filtrados = filtrados.filter(projeto =>
-                            projeto.nome.toLowerCase().includes(this.busca.toLowerCase()) ||
-                            projeto.descricao.toLowerCase().includes(this.busca.toLowerCase()) ||
-                            projeto.tecnologias.some(tech => tech.toLowerCase().includes(this.busca.toLowerCase()))
+                            projeto.nome.toLowerCase().includes(termoBusca) ||
+                            projeto.descricao.toLowerCase().includes(termoBusca) ||
+                            projeto.tecnologias.some(tech => tech.toLowerCase().includes(termoBusca)) ||
+                            projeto.developer.nome.toLowerCase().includes(termoBusca)
                         );
                     }
 
@@ -400,10 +588,12 @@
 
                     return filtrados;
                 }
-            };
+            }
         }
     </script>
 
-    </body>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 
-    </html>
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>

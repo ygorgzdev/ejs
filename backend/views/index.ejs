@@ -5,8 +5,7 @@
 
             <main class="flex-grow">
                 <section class="relative h-screen w-full bg-cover bg-center"
-                    style="background-image: url('/img/teste2.png');">
-
+                    style="background-image: url('/img/top-image.png');">
 
                     <div
                         class="relative z-20 flex flex-col justify-center items-start h-full w-full max-w-full pl-14 pr-20">
@@ -114,50 +113,6 @@
 
             <%- include('partials/footer') %>
     </div>
-
-    <script>
-        function appData() {
-            return {
-                // Dados globais da aplicação no frontend, se necessário
-            };
-        }
-
-        function carouselData() {
-            return {
-                currentIndex: 0,
-                slides: [
-                    {
-                        image: '/images/carousel1.jpg', // Substitua pelo caminho das suas imagens
-                        title: 'Inovação e Criatividade',
-                        caption: 'Transformamos ideias em soluções digitais impactantes.'
-                    },
-                    {
-                        image: '/images/carousel2.jpg',
-                        title: 'Colaboração Eficiente',
-                        caption: 'Trabalhe em equipe de forma integrada e produtiva.'
-                    },
-                    {
-                        image: '/images/carousel3.jpg',
-                        title: 'Resultados Extraordinários',
-                        caption: 'Alcance seus objetivos com nossa plataforma.'
-                    }
-                ],
-                prevSlide() {
-                    this.currentIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
-                },
-                nextSlide() {
-                    this.currentIndex = (this.currentIndex + 1) % this.slides.length;
-                },
-                init() {
-                    // Troca automática de slides (opcional)
-                    // setInterval(() => {
-                    //     this.nextSlide();
-                    // }, 5000); // Troca a cada 5 segundos
-                }
-            }
-        }
-    </script>
-
     </body>
 
     </html>
