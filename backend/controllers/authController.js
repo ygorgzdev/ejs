@@ -20,7 +20,7 @@ exports.register = async (req, res) => {
     if (req.headers['content-type'] === 'application/json') {
       return res.status(201).json({ msg: 'Usuário registrado com sucesso' });
     } else {
-      // Redirecionar para login
+      //redireciona para login
       return res.redirect('/login?registered=true');
     }
   } catch (err) {
@@ -57,13 +57,11 @@ exports.login = async (req, res) => {
     if (req.headers['content-type'] === 'application/json') {
       return res.json({ token, user: { id: user._id, name: user.name, role: user.role } });
     } else {
-      // Configurar cookie
+      //configuração de cookie
       res.cookie('token', token, {
         httpOnly: true,
-        maxAge: 2 * 24 * 60 * 60 * 1000 // 2 dias em milissegundos
+        maxAge: 2 * 24 * 60 * 60 * 1000
       });
-
-      // Redirecionar
       return res.redirect(redirect);
     }
   } catch (err) {
@@ -76,15 +74,12 @@ exports.login = async (req, res) => {
     }
   }
 };
-
 exports.logout = (req, res) => {
   res.clearCookie('token');
-
   if (req.headers['content-type'] === 'application/json') {
-    // Chamada via API
+    //chamada via API
     return res.json({ success: true, message: 'Logout realizado com sucesso' });
   } else {
-    // Navegador - redirecionar para login
     return res.redirect('/login');
   }
 };

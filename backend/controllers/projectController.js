@@ -14,7 +14,6 @@ exports.createProject = async (req, res) => {
   const { title, description, category, status, fundingGoal, rewards } = req.body;
 
   try {
-    // Verificar se o usuário é developer
     if (req.user.role !== 'developer') {
       return sendError(res, 'Apenas desenvolvedores podem criar projetos', null, 403);
     }
