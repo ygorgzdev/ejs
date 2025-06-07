@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { authPage } = require('../middleware/auth');
+const { requireAuth, requireDeveloper } = require('../middleware/requireAuth'); // Adicionar esta linha
 const { register, login } = require('../controllers/authController');
+const Project = require('../models/Project');
+const mongoose = require('mongoose');
 
 // Página inicial
 router.get('/', (req, res) => {
@@ -69,12 +72,14 @@ router.get('/logout', (req, res) => {
 
 // IMPORTANTE: Rotas específicas ANTES da rota com parâmetro dinâmico (:id)
 // Rota para criar novo projeto (protegida)
-router.get('/projects/new', authPage, (req, res) => {
-  // Verificar se o usuário é developer
-  if (req.user.role !== 'developer') {
-    return res.redirect('/');
-  }
+router.get('/projects/new', requireDeveloper, (req, res) => {
+  res.render('new-project', {
+    title: 'Criar Novo Projeto - IncubePro'
+  });
+});
 
+// Rota alternativa para criar projeto
+router.get('/criar-projeto', requireDeveloper, (req, res) => {
   res.render('new-project', {
     title: 'Criar Novo Projeto - IncubePro'
   });
@@ -88,14 +93,20 @@ router.get('/projects/:id', (req, res) => {
   });
 });
 
+// Rota alternativa para detalhes do projeto
+router.get('/projeto/:id', (req, res) => {
+  res.render('project-detail', {
+    title: 'Detalhes do Projeto - IncubePro',
+    projectId: req.params.id
+  });
+});
+
 // Rota para perfil do usuário (protegida)
-router.get('/profile', authPage, (req, res) => {
+router.get('/profile', requireAuth, (req, res) => {
   res.render('profile', {
     title: 'Meu Perfil - IncubePro'
   });
 });
-
-// Adicione esta rota ao arquivo routes/pages.js existente
 
 // Rota para "Meus Projetos" - apenas para usuários logados
 router.get('/meus-projetos', requireAuth, async (req, res) => {
@@ -213,6 +224,41 @@ router.get('/meus-projetos', requireAuth, async (req, res) => {
       title: 'Erro - IncubePro',
       error: process.env.NODE_ENV === 'development' ? error : null,
       message: 'Erro ao carregar seus projetos'
+    });
+  }
+});
+
+// Rota para editar projeto (protegida - apenas criador do projeto)
+router.get('/editar-projeto/:id', requireAuth, async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).render('error', {
+        title: 'Projeto não encontrado - IncubePro',
+        message: 'O projeto solicitado não foi encontrado.'
+      });
+    }
+
+    // Verificar se o usuário é o criador do projeto
+    if (project.creator.toString() !== req.user.id) {
+      return res.status(403).render('error', {
+        title: 'Acesso Negado - IncubePro',
+        message: 'Você não tem permissão para editar este projeto.'
+      });
+    }
+
+    res.render('edit-project', {
+      title: 'Editar Projeto - IncubePro',
+      project
+    });
+
+  } catch (error) {
+    console.error('Erro ao carregar projeto para edição:', error);
+    res.status(500).render('error', {
+      title: 'Erro - IncubePro',
+      error: process.env.NODE_ENV === 'development' ? error : null,
+      message: 'Erro ao carregar projeto para edição'
     });
   }
 });
