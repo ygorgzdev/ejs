@@ -1,0 +1,401 @@
+<%- include('./partials/head') %>
+
+    <%- include('./partials/navbar') %>
+
+        <main x-data="meusProjetosApp()" class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+            <!-- Header da Página -->
+            <div class="bg-white shadow-sm border-b">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div class="md:flex md:items-center md:justify-between">
+                        <div class="flex-1 min-w-0">
+                            <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl">
+                                <span class="material-icons-outlined text-blue-600 mr-3"
+                                    style="font-size: 2.5rem;">work</span>
+                                Meus Projetos
+                            </h1>
+                            <p class="mt-2 text-lg text-gray-600">
+                                Gerencie e acompanhe o progresso dos seus projetos
+                            </p>
+                        </div>
+                        <div class="mt-4 md:mt-0">
+                            <a href="/criar-projeto"
+                                class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                                <span class="material-icons-outlined mr-2">add</span>
+                                Novo Projeto
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Estatísticas Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <span class="material-icons-outlined text-blue-600 text-3xl">folder</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">Total de Projetos</p>
+                                <p class="text-2xl font-bold text-gray-900">
+                                    <%= stats.total %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <span class="material-icons-outlined text-green-600 text-3xl">play_circle</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">Em Andamento</p>
+                                <p class="text-2xl font-bold text-gray-900">
+                                    <%= stats.emAndamento %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <span class="material-icons-outlined text-purple-600 text-3xl">rocket_launch</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">Lançados</p>
+                                <p class="text-2xl font-bold text-gray-900">
+                                    <%= stats.lancado %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-yellow-500">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <span class="material-icons-outlined text-yellow-600 text-3xl">monetization_on</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">Meta Total</p>
+                                <p class="text-2xl font-bold text-gray-900">R$ <%= financial.totalFundingGoal ?
+                                        financial.totalFundingGoal.toLocaleString('pt-BR') : '0' %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros e Busca -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <form method="GET" class="space-y-4 md:space-y-0 md:grid md:grid-cols-4 md:gap-4">
+                        <!-- Busca -->
+                        <div>
+                            <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
+                            <div class="relative">
+                                <input type="text" name="search" id="search" value="<%= currentFilters.search %>"
+                                    placeholder="Título ou descrição..."
+                                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <span
+                                    class="absolute left-3 top-2.5 material-icons-outlined text-gray-400 text-xl">search</span>
+                            </div>
+                        </div>
+
+                        <!-- Filtro por Status -->
+                        <div>
+                            <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                            <select name="status" id="status"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">Todos os status</option>
+                                <% statuses.forEach(status=> { %>
+                                    <option value="<%= status %>" <%=currentFilters.status===status ? 'selected' : '' %>
+                                        >
+                                        <%= status %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+
+                        <!-- Filtro por Categoria -->
+                        <div>
+                            <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                            <select name="category" id="category"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">Todas as categorias</option>
+                                <% categories.forEach(category=> { %>
+                                    <option value="<%= category %>" <%=currentFilters.category===category ? 'selected'
+                                        : '' %>>
+                                        <%= category %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+
+                        <!-- Ordenação -->
+                        <div>
+                            <label for="sortBy" class="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label>
+                            <select name="sortBy" id="sortBy"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="newest" <%=currentFilters.sortBy==='newest' ? 'selected' : '' %>>Mais
+                                    recentes</option>
+                                <option value="oldest" <%=currentFilters.sortBy==='oldest' ? 'selected' : '' %>>Mais
+                                    antigos</option>
+                                <option value="title" <%=currentFilters.sortBy==='title' ? 'selected' : '' %>>Título
+                                    (A-Z)</option>
+                                <option value="fundingGoal" <%=currentFilters.sortBy==='fundingGoal' ? 'selected' : ''
+                                    %>>Meta de financiamento</option>
+                            </select>
+                        </div>
+                    </form>
+
+                    <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+                        <button type="submit" form="filterForm"
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
+                            <span class="material-icons-outlined mr-2 text-sm">filter_list</span>
+                            Aplicar Filtros
+                        </button>
+
+                        <% if (currentFilters.search || currentFilters.status || currentFilters.category) { %>
+                            <a href="/meus-projetos"
+                                class="inline-flex items-center px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 hover:border-gray-400 rounded-lg transition-colors duration-200">
+                                <span class="material-icons-outlined mr-2 text-sm">clear</span>
+                                Limpar Filtros
+                            </a>
+                            <% } %>
+                    </div>
+                </div>
+
+                <!-- Lista de Projetos -->
+                <% if (projects.length> 0) { %>
+                    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        <% projects.forEach(project=> { %>
+                            <div
+                                class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden border">
+                                <div class="p-6">
+                                    <!-- Header do Projeto -->
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="flex-1">
+                                            <h3 class="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                                                <%= project.title %>
+                                            </h3>
+                                            <div class="flex items-center space-x-2 mb-3">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                            <% if (project.status === 'Conceito') { %>bg-gray-100 text-gray-800
+                                            <% } else if (project.status === 'Em andamento') { %>bg-blue-100 text-blue-800
+                                            <% } else if (project.status === 'Versão beta') { %>bg-yellow-100 text-yellow-800
+                                            <% } else if (project.status === 'No ar (lançado)') { %>bg-green-100 text-green-800
+                                            <% } %>">
+                                                    <%= project.status %>
+                                                </span>
+                                                <span class="text-xs text-gray-500">
+                                                    <%= project.category %>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Descrição -->
+                                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                                        <%= project.description %>
+                                    </p>
+
+                                    <!-- Informações Financeiras -->
+                                    <div class="space-y-2 mb-4">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-sm text-gray-500">Meta de Financiamento:</span>
+                                            <span class="font-semibold text-green-600">
+                                                R$ <%= project.fundingGoal.toLocaleString('pt-BR') %>
+                                            </span>
+                                        </div>
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-sm text-gray-500">Arrecadado:</span>
+                                            <span class="font-semibold text-blue-600">
+                                                R$ <%= project.currentFunding.toLocaleString('pt-BR') %>
+                                            </span>
+                                        </div>
+                                        <!-- Barra de Progresso -->
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-blue-600 h-2 rounded-full"
+                                                style="width: <%= Math.min((project.currentFunding / project.fundingGoal) * 100, 100) %>%">
+                                            </div>
+                                        </div>
+                                        <div class="text-xs text-gray-500 text-right">
+                                            <%= Math.round((project.currentFunding / project.fundingGoal) * 100) %>%
+                                                atingido
+                                        </div>
+                                    </div>
+
+                                    <!-- Data de Criação -->
+                                    <div class="flex items-center text-xs text-gray-500 mb-4">
+                                        <span class="material-icons-outlined mr-1"
+                                            style="font-size: 16px;">schedule</span>
+                                        Criado em <%= new Date(project.createdAt).toLocaleDateString('pt-BR') %>
+                                    </div>
+
+                                    <!-- Ações -->
+                                    <div class="flex space-x-2">
+                                        <a href="/projeto/<%= project._id %>"
+                                            class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                                            <span class="material-icons-outlined mr-1 text-sm">visibility</span>
+                                            Ver Detalhes
+                                        </a>
+                                        <a href="/editar-projeto/<%= project._id %>"
+                                            class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 text-sm font-medium rounded-lg transition-colors duration-200">
+                                            <span class="material-icons-outlined text-sm">edit</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                    </div>
+
+                    <!-- Paginação -->
+                    <% if (pagination.pages> 1) { %>
+                        <div class="mt-8 flex items-center justify-between">
+                            <div class="flex-1 flex justify-between sm:hidden">
+                                <% if (pagination.hasPrev) { %>
+                                    <a href="?page=<%= pagination.current - 1 %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
+                                        class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                        Anterior
+                                    </a>
+                                    <% } %>
+                                        <% if (pagination.hasNext) { %>
+                                            <a href="?page=<%= pagination.current + 1 %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
+                                                class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                                Próximo
+                                            </a>
+                                            <% } %>
+                            </div>
+                            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-700">
+                                        Mostrando
+                                        <span class="font-medium">
+                                            <%= ((pagination.current - 1) * 9) + 1 %>
+                                        </span>
+                                        até
+                                        <span class="font-medium">
+                                            <%= Math.min(pagination.current * 9, pagination.total) %>
+                                        </span>
+                                        de
+                                        <span class="font-medium">
+                                            <%= pagination.total %>
+                                        </span>
+                                        projetos
+                                    </p>
+                                </div>
+                                <div>
+                                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                                        aria-label="Pagination">
+                                        <% if (pagination.hasPrev) { %>
+                                            <a href="?page=<%= pagination.current - 1 %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
+                                                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <span class="sr-only">Anterior</span>
+                                                <span class="material-icons-outlined">chevron_left</span>
+                                            </a>
+                                            <% } %>
+
+                                                <% for (let i=Math.max(1, pagination.current - 2); i
+                                                    <=Math.min(pagination.pages, pagination.current + 2); i++) { %>
+                                                    <% if (i===pagination.current) { %>
+                                                        <span aria-current="page"
+                                                            class="relative inline-flex items-center px-4 py-2 border border-blue-500 bg-blue-50 text-sm font-medium text-blue-600">
+                                                            <%= i %>
+                                                        </span>
+                                                        <% } else { %>
+                                                            <a href="?page=<%= i %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
+                                                                class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                                                <%= i %>
+                                                            </a>
+                                                            <% } %>
+                                                                <% } %>
+
+                                                                    <% if (pagination.hasNext) { %>
+                                                                        <a href="?page=<%= pagination.current + 1 %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
+                                                                            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                                            <span class="sr-only">Próximo</span>
+                                                                            <span
+                                                                                class="material-icons-outlined">chevron_right</span>
+                                                                        </a>
+                                                                        <% } %>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+
+                            <% } else { %>
+                                <!-- Estado Vazio -->
+                                <div class="text-center py-12">
+                                    <div
+                                        class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                        <span class="material-icons-outlined text-gray-400 text-4xl">work_off</span>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                                        <% if (currentFilters.search || currentFilters.status ||
+                                            currentFilters.category) { %>
+                                            Nenhum projeto encontrado
+                                            <% } else { %>
+                                                Você ainda não criou nenhum projeto
+                                                <% } %>
+                                    </h3>
+                                    <p class="text-gray-600 mb-6">
+                                        <% if (currentFilters.search || currentFilters.status ||
+                                            currentFilters.category) { %>
+                                            Tente ajustar os filtros ou criar um novo projeto.
+                                            <% } else { %>
+                                                Que tal começar criando seu primeiro projeto?
+                                                <% } %>
+                                    </p>
+                                    <div class="space-x-4">
+                                        <% if (currentFilters.search || currentFilters.status ||
+                                            currentFilters.category) { %>
+                                            <a href="/meus-projetos"
+                                                class="inline-flex items-center px-4 py-2 border border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 rounded-lg transition-colors duration-200">
+                                                <span class="material-icons-outlined mr-2">clear</span>
+                                                Limpar Filtros
+                                            </a>
+                                            <% } %>
+                                                <a href="/criar-projeto"
+                                                    class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                                                    <span class="material-icons-outlined mr-2">add</span>
+                                                    Criar Primeiro Projeto
+                                                </a>
+                                    </div>
+                                </div>
+                                <% } %>
+            </div>
+        </main>
+
+        <script>
+            function meusProjetosApp() {
+                return {
+                    init() {
+                        // Auto-submit do formulário quando filtros mudarem
+                        const form = document.querySelector('form');
+                        const selects = form.querySelectorAll('select');
+
+                        selects.forEach(select => {
+                            select.addEventListener('change', () => {
+                                form.submit();
+                            });
+                        });
+
+                        // Debounce para o campo de busca
+                        const searchInput = document.querySelector('#search');
+                        let searchTimeout;
+
+                        searchInput.addEventListener('input', () => {
+                            clearTimeout(searchTimeout);
+                            searchTimeout = setTimeout(() => {
+                                form.submit();
+                            }, 500);
+                        });
+                    }
+                }
+            }
+        </script>
+
+        <%- include('./partials/footer') %>

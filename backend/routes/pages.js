@@ -95,4 +95,126 @@ router.get('/profile', authPage, (req, res) => {
   });
 });
 
+// Adicione esta rota ao arquivo routes/pages.js existente
+
+// Rota para "Meus Projetos" - apenas para usuários logados
+router.get('/meus-projetos', requireAuth, async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 9; // 9 projetos por página (3x3 grid)
+    const skip = (page - 1) * limit;
+
+    // Construir filtros para projetos do usuário logado
+    const filters = { creator: req.user.id };
+
+    // Filtros adicionais
+    if (req.query.status) {
+      filters.status = req.query.status;
+    }
+
+    if (req.query.category) {
+      filters.category = req.query.category;
+    }
+
+    if (req.query.search) {
+      filters.$or = [
+        { title: { $regex: req.query.search, $options: 'i' } },
+        { description: { $regex: req.query.search, $options: 'i' } }
+      ];
+    }
+
+    // Definir ordenação
+    let sortBy = { createdAt: -1 }; // Padrão: mais recentes primeiro
+
+    if (req.query.sortBy) {
+      switch (req.query.sortBy) {
+        case 'title':
+          sortBy = { title: 1 };
+          break;
+        case 'fundingGoal':
+          sortBy = { fundingGoal: -1 };
+          break;
+        case 'currentFunding':
+          sortBy = { currentFunding: -1 };
+          break;
+        case 'oldest':
+          sortBy = { createdAt: 1 };
+          break;
+        default:
+          sortBy = { createdAt: -1 };
+      }
+    }
+
+    // Buscar projetos do usuário
+    const projects = await Project.find(filters)
+      .populate('creator', 'name email role avatar')
+      .skip(skip)
+      .limit(limit)
+      .sort(sortBy);
+
+    // Contar total de projetos
+    const total = await Project.countDocuments(filters);
+
+    // Calcular estatísticas do usuário
+    const stats = {
+      total: total,
+      conceito: await Project.countDocuments({ ...filters, status: 'Conceito' }),
+      emAndamento: await Project.countDocuments({ ...filters, status: 'Em andamento' }),
+      beta: await Project.countDocuments({ ...filters, status: 'Versão beta' }),
+      lancado: await Project.countDocuments({ ...filters, status: 'No ar (lançado)' })
+    };
+
+    // Calcular totais financeiros
+    const financialStats = await Project.aggregate([
+      { $match: { creator: new mongoose.Types.ObjectId(req.user.id) } },
+      {
+        $group: {
+          _id: null,
+          totalFundingGoal: { $sum: '$fundingGoal' },
+          totalCurrentFunding: { $sum: '$currentFunding' }
+        }
+      }
+    ]);
+
+    const financial = financialStats[0] || { totalFundingGoal: 0, totalCurrentFunding: 0 };
+
+    // Metadados de paginação
+    const pagination = {
+      current: page,
+      pages: Math.ceil(total / limit),
+      total,
+      hasNext: page < Math.ceil(total / limit),
+      hasPrev: page > 1
+    };
+
+    // Obter categorias e status únicos para filtros
+    const categories = await Project.distinct('category');
+    const statuses = await Project.distinct('status');
+
+    res.render('meus-projetos', {
+      title: 'Meus Projetos - IncubePro',
+      projects,
+      stats,
+      financial,
+      pagination,
+      categories,
+      statuses,
+      currentFilters: {
+        status: req.query.status || '',
+        category: req.query.category || '',
+        search: req.query.search || '',
+        sortBy: req.query.sortBy || 'newest'
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro ao carregar meus projetos:', error);
+    res.status(500).render('error', {
+      title: 'Erro - IncubePro',
+      error: process.env.NODE_ENV === 'development' ? error : null,
+      message: 'Erro ao carregar seus projetos'
+    });
+  }
+});
+
 module.exports = router;
