@@ -218,152 +218,155 @@
                                         <!-- Barra de Progresso -->
                                         <div class="w-full bg-gray-200 rounded-full h-2">
                                             <div class="bg-blue-600 h-2 rounded-full"
-                                                style="width: <%= Math.min((project.currentFunding / project.fundingGoal) * 100, 100) %>%;">
+                                                style="width: <%= Math.min((project.currentFunding / project.fundingGoal) * 100, 100) %>%">
                                             </div>
                                         </div>
+                                        <div class="text-xs text-gray-500 text-right">
+                                            <%= Math.round((project.currentFunding / project.fundingGoal) * 100) %>%
+                                                atingido
+                                        </div>
                                     </div>
-                                    <div class="text-xs text-gray-500 text-right">
-                                        <%= Math.round((project.currentFunding / project.fundingGoal) * 100) %>%
-                                            atingido
+
+                                    <!-- Data de Criação -->
+                                    <div class="flex items-center text-xs text-gray-500 mb-4">
+                                        <span class="material-icons-outlined mr-1"
+                                            style="font-size: 16px;">schedule</span>
+                                        Criado em <%= new Date(project.createdAt).toLocaleDateString('pt-BR') %>
                                     </div>
-                                </div>
 
-                                <!-- Data de Criação -->
-                                <div class="flex items-center text-xs text-gray-500 mb-4">
-                                    <span class="material-icons-outlined mr-1" style="font-size: 16px;">schedule</span>
-                                    Criado em <%= new Date(project.createdAt).toLocaleDateString('pt-BR') %>
-                                </div>
-
-                                <!-- Ações -->
-                                <div class="flex space-x-2">
-                                    <a href="/projeto/<%= project._id %>"
-                                        class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
-                                        <span class="material-icons-outlined mr-1 text-sm">visibility</span>
-                                        Ver Detalhes
-                                    </a>
-                                    <a href="/editar-projeto/<%= project._id %>"
-                                        class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 text-sm font-medium rounded-lg transition-colors duration-200">
-                                        <span class="material-icons-outlined text-sm">edit</span>
-                                    </a>
+                                    <!-- Ações -->
+                                    <div class="flex space-x-2">
+                                        <a href="/projeto/<%= project._id %>"
+                                            class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                                            <span class="material-icons-outlined mr-1 text-sm">visibility</span>
+                                            Ver Detalhes
+                                        </a>
+                                        <a href="/editar-projeto/<%= project._id %>"
+                                            class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 text-sm font-medium rounded-lg transition-colors duration-200">
+                                            <span class="material-icons-outlined text-sm">edit</span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
+                            <% }) %>
                     </div>
-                    <% }) %>
-            </div>
 
-            <!-- Paginação -->
-            <% if (pagination.pages> 1) { %>
-                <div class="mt-8 flex items-center justify-between">
-                    <div class="flex-1 flex justify-between sm:hidden">
-                        <% if (pagination.hasPrev) { %>
-                            <a href="?page=<%= pagination.current - 1 %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
-                                class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                Anterior
-                            </a>
-                            <% } %>
-                                <% if (pagination.hasNext) { %>
-                                    <a href="?page=<%= pagination.current + 1 %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
-                                        class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                        Próximo
-                                    </a>
-                                    <% } %>
-                    </div>
-                    <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                        <div>
-                            <p class="text-sm text-gray-700">
-                                Mostrando
-                                <span class="font-medium">
-                                    <%= ((pagination.current - 1) * 9) + 1 %>
-                                </span>
-                                até
-                                <span class="font-medium">
-                                    <%= Math.min(pagination.current * 9, pagination.total) %>
-                                </span>
-                                de
-                                <span class="font-medium">
-                                    <%= pagination.total %>
-                                </span>
-                                projetos
-                            </p>
-                        </div>
-                        <div>
-                            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-                                aria-label="Pagination">
+                    <!-- Paginação -->
+                    <% if (pagination.pages> 1) { %>
+                        <div class="mt-8 flex items-center justify-between">
+                            <div class="flex-1 flex justify-between sm:hidden">
                                 <% if (pagination.hasPrev) { %>
                                     <a href="?page=<%= pagination.current - 1 %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
-                                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                                        <span class="sr-only">Anterior</span>
-                                        <span class="material-icons-outlined">chevron_left</span>
+                                        class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                        Anterior
                                     </a>
                                     <% } %>
-
-                                        <% for (let i=Math.max(1, pagination.current - 2); i
-                                            <=Math.min(pagination.pages, pagination.current + 2); i++) { %>
-                                            <% if (i===pagination.current) { %>
-                                                <span aria-current="page"
-                                                    class="relative inline-flex items-center px-4 py-2 border border-blue-500 bg-blue-50 text-sm font-medium text-blue-600">
-                                                    <%= i %>
-                                                </span>
-                                                <% } else { %>
-                                                    <a href="?page=<%= i %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
-                                                        class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                                                        <%= i %>
-                                                    </a>
-                                                    <% } %>
-                                                        <% } %>
-
-                                                            <% if (pagination.hasNext) { %>
-                                                                <a href="?page=<%= pagination.current + 1 %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
-                                                                    class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                                                                    <span class="sr-only">Próximo</span>
-                                                                    <span
-                                                                        class="material-icons-outlined">chevron_right</span>
-                                                                </a>
-                                                                <% } %>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-                <% } %>
-
-                    <% } else { %>
-                        <!-- Estado Vazio -->
-                        <div class="text-center py-12">
-                            <div
-                                class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                                <span class="material-icons-outlined text-gray-400 text-4xl">work_off</span>
+                                        <% if (pagination.hasNext) { %>
+                                            <a href="?page=<%= pagination.current + 1 %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
+                                                class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                                Próximo
+                                            </a>
+                                            <% } %>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-900 mb-2">
-                                <% if (currentFilters.search || currentFilters.status || currentFilters.category) { %>
-                                    Nenhum projeto encontrado
-                                    <% } else { %>
-                                        Você ainda não criou nenhum projeto
-                                        <% } %>
-                            </h3>
-                            <p class="text-gray-600 mb-6">
-                                <% if (currentFilters.search || currentFilters.status || currentFilters.category) { %>
-                                    Tente ajustar os filtros ou criar um novo projeto.
-                                    <% } else { %>
-                                        Que tal começar criando seu primeiro projeto?
-                                        <% } %>
-                            </p>
-                            <div class="space-x-4">
-                                <% if (currentFilters.search || currentFilters.status || currentFilters.category) { %>
-                                    <a href="/meus-projetos"
-                                        class="inline-flex items-center px-4 py-2 border border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 rounded-lg transition-colors duration-200">
-                                        <span class="material-icons-outlined mr-2">clear</span>
-                                        Limpar Filtros
-                                    </a>
-                                    <% } %>
-                                        <a href="/criar-projeto"
-                                            class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
-                                            <span class="material-icons-outlined mr-2">add</span>
-                                            Criar Primeiro Projeto
-                                        </a>
+                            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-700">
+                                        Mostrando
+                                        <span class="font-medium">
+                                            <%= ((pagination.current - 1) * 9) + 1 %>
+                                        </span>
+                                        até
+                                        <span class="font-medium">
+                                            <%= Math.min(pagination.current * 9, pagination.total) %>
+                                        </span>
+                                        de
+                                        <span class="font-medium">
+                                            <%= pagination.total %>
+                                        </span>
+                                        projetos
+                                    </p>
+                                </div>
+                                <div>
+                                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                                        aria-label="Pagination">
+                                        <% if (pagination.hasPrev) { %>
+                                            <a href="?page=<%= pagination.current - 1 %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
+                                                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <span class="sr-only">Anterior</span>
+                                                <span class="material-icons-outlined">chevron_left</span>
+                                            </a>
+                                            <% } %>
+
+                                                <% for (let i=Math.max(1, pagination.current - 2); i
+                                                    <=Math.min(pagination.pages, pagination.current + 2); i++) { %>
+                                                    <% if (i===pagination.current) { %>
+                                                        <span aria-current="page"
+                                                            class="relative inline-flex items-center px-4 py-2 border border-blue-500 bg-blue-50 text-sm font-medium text-blue-600">
+                                                            <%= i %>
+                                                        </span>
+                                                        <% } else { %>
+                                                            <a href="?page=<%= i %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
+                                                                class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                                                <%= i %>
+                                                            </a>
+                                                            <% } %>
+                                                                <% } %>
+
+                                                                    <% if (pagination.hasNext) { %>
+                                                                        <a href="?page=<%= pagination.current + 1 %><%= currentFilters.status ? '&status=' + currentFilters.status : '' %><%= currentFilters.category ? '&category=' + currentFilters.category : '' %><%= currentFilters.search ? '&search=' + currentFilters.search : '' %>"
+                                                                            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                                            <span class="sr-only">Próximo</span>
+                                                                            <span
+                                                                                class="material-icons-outlined">chevron_right</span>
+                                                                        </a>
+                                                                        <% } %>
+                                    </nav>
+                                </div>
                             </div>
                         </div>
                         <% } %>
-                            </div>
+
+                            <% } else { %>
+                                <!-- Estado Vazio -->
+                                <div class="text-center py-12">
+                                    <div
+                                        class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                        <span class="material-icons-outlined text-gray-400 text-4xl">work_off</span>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                                        <% if (currentFilters.search || currentFilters.status ||
+                                            currentFilters.category) { %>
+                                            Nenhum projeto encontrado
+                                            <% } else { %>
+                                                Você ainda não criou nenhum projeto
+                                                <% } %>
+                                    </h3>
+                                    <p class="text-gray-600 mb-6">
+                                        <% if (currentFilters.search || currentFilters.status ||
+                                            currentFilters.category) { %>
+                                            Tente ajustar os filtros ou criar um novo projeto.
+                                            <% } else { %>
+                                                Que tal começar criando seu primeiro projeto?
+                                                <% } %>
+                                    </p>
+                                    <div class="space-x-4">
+                                        <% if (currentFilters.search || currentFilters.status ||
+                                            currentFilters.category) { %>
+                                            <a href="/meus-projetos"
+                                                class="inline-flex items-center px-4 py-2 border border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 rounded-lg transition-colors duration-200">
+                                                <span class="material-icons-outlined mr-2">clear</span>
+                                                Limpar Filtros
+                                            </a>
+                                            <% } %>
+                                                <a href="/criar-projeto"
+                                                    class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                                                    <span class="material-icons-outlined mr-2">add</span>
+                                                    Criar Primeiro Projeto
+                                                </a>
+                                    </div>
+                                </div>
+                                <% } %>
+            </div>
         </main>
 
         <script>
