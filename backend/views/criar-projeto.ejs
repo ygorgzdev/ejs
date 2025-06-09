@@ -1,0 +1,422 @@
+<%- include('./partials/head') %>
+
+    <%- include('./partials/navbar') %>
+
+        <main x-data="criarProjetoApp()" class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+            <!-- Header da Página -->
+            <div class="bg-white shadow-sm border-b">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div class="text-center">
+                        <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl">
+                            <span class="material-icons-outlined text-blue-600 mr-3"
+                                style="font-size: 2.5rem;">add_circle</span>
+                            Criar Novo Projeto
+                        </h1>
+                        <p class="mt-2 text-lg text-gray-600">
+                            Transforme sua ideia em realidade. Preencha os detalhes do seu projeto
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Formulário Principal -->
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+                    <div class="px-6 py-4 bg-gray-50 border-b">
+                        <h2 class="text-xl font-semibold text-gray-900 flex items-center">
+                            <span class="material-icons-outlined text-blue-600 mr-2">info</span>
+                            Informações do Projeto
+                        </h2>
+                    </div>
+
+                    <form id="createProjectForm" method="POST" action="/api/projects" class="p-6 space-y-6">
+                        <!-- Título do Projeto -->
+                        <div>
+                            <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+                                Título do Projeto *
+                            </label>
+                            <input type="text" name="title" id="title" required maxlength="100" x-model="formData.title"
+                                @input="validateField('title')"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                                placeholder="Ex: Aplicativo de Gestão Financeira Pessoal">
+                            <div class="mt-1 flex justify-between">
+                                <p x-show="errors.title" x-text="errors.title" class="text-sm text-red-600"></p>
+                                <p class="text-xs text-gray-500">
+                                    <span x-text="formData.title.length"></span>/100 caracteres
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Descrição -->
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                                Descrição do Projeto *
+                            </label>
+                            <textarea name="description" id="description" rows="5" required maxlength="1000"
+                                x-model="formData.description" @input="validateField('description')"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none"
+                                placeholder="Descreva detalhadamente seu projeto, suas funcionalidades principais e o problema que ele resolve..."></textarea>
+                            <div class="mt-1 flex justify-between">
+                                <p x-show="errors.description" x-text="errors.description" class="text-sm text-red-600">
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    <span x-text="formData.description.length"></span>/1000 caracteres
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Categoria e Status -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Categoria -->
+                            <div>
+                                <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Categoria *
+                                </label>
+                                <select name="category" id="category" required x-model="formData.category"
+                                    @change="validateField('category')"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
+                                    <option value="">Selecione uma categoria</option>
+                                    <option value="Desenvolvimento Web">Desenvolvimento Web</option>
+                                    <option value="Aplicativo Mobile">Aplicativo Mobile</option>
+                                    <option value="IA/Machine Learning">IA/Machine Learning</option>
+                                    <option value="Blockchain">Blockchain</option>
+                                    <option value="IoT">IoT</option>
+                                    <option value="Jogos">Jogos</option>
+                                    <option value="Outros">Outros</option>
+                                </select>
+                                <p x-show="errors.category" x-text="errors.category" class="mt-1 text-sm text-red-600">
+                                </p>
+                            </div>
+
+                            <!-- Status -->
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Status Atual
+                                </label>
+                                <select name="status" id="status" x-model="formData.status"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
+                                    <option value="Conceito">Conceito</option>
+                                    <option value="Em andamento">Em andamento</option>
+                                    <option value="Versão beta">Versão beta</option>
+                                    <option value="No ar (lançado)">No ar (lançado)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Meta de Financiamento -->
+                        <div>
+                            <label for="fundingGoal" class="block text-sm font-medium text-gray-700 mb-2">
+                                Meta de Financiamento (R$) *
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-3 text-gray-500">R$</span>
+                                <input type="number" name="fundingGoal" id="fundingGoal" required min="100" step="0.01"
+                                    x-model="formData.fundingGoal" @input="validateField('fundingGoal')"
+                                    class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                                    placeholder="10000.00">
+                            </div>
+                            <p x-show="errors.fundingGoal" x-text="errors.fundingGoal"
+                                class="mt-1 text-sm text-red-600"></p>
+                            <p class="mt-1 text-xs text-gray-500">
+                                Valor mínimo: R$ 100,00
+                            </p>
+                        </div>
+
+                        <!-- Recompensas -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Recompensas para Apoiadores
+                                <span class="text-gray-500 font-normal">(opcional)</span>
+                            </label>
+                            <div class="space-y-3">
+                                <template x-for="(reward, index) in formData.rewards" :key="index">
+                                    <div class="flex items-center space-x-2">
+                                        <input type="text" x-model="formData.rewards[index]"
+                                            :name="'rewards[' + index + ']'"
+                                            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                                            :placeholder="'Recompensa ' + (index + 1)">
+                                        <button type="button" @click="removeReward(index)"
+                                            class="inline-flex items-center justify-center w-10 h-10 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                            <span class="material-icons-outlined text-xl">remove_circle</span>
+                                        </button>
+                                    </div>
+                                </template>
+
+                                <button type="button" @click="addReward()" x-show="formData.rewards.length < 5"
+                                    class="inline-flex items-center px-4 py-2 text-blue-600 hover:bg-blue-50 border border-blue-200 hover:border-blue-300 rounded-lg transition-colors">
+                                    <span class="material-icons-outlined mr-2 text-sm">add</span>
+                                    Adicionar Recompensa
+                                </button>
+
+                                <p class="text-xs text-gray-500">
+                                    Máximo de 5 recompensas. Ex: "Acesso antecipado", "Versão premium gratuita", etc.
+                                </p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="mt-8 flex items-center justify-between bg-white rounded-xl shadow-sm border p-6">
+                    <a href="/meus-projetos"
+                        class="inline-flex items-center px-6 py-3 border border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 font-medium rounded-lg transition-colors duration-200">
+                        <span class="material-icons-outlined mr-2">arrow_back</span>
+                        Voltar
+                    </a>
+
+                    <div class="flex space-x-4">
+                        <button type="button" @click="resetForm()"
+                            class="inline-flex items-center px-6 py-3 border border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 font-medium rounded-lg transition-colors duration-200">
+                            <span class="material-icons-outlined mr-2">refresh</span>
+                            Limpar
+                        </button>
+
+                        <button type="submit" form="createProjectForm" :disabled="isSubmitting || !isFormValid()"
+                            :class="isSubmitting || !isFormValid() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700 hover:shadow-lg'"
+                            class="inline-flex items-center px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                            <span x-show="!isSubmitting" class="material-icons-outlined mr-2">save</span>
+                            <span x-show="isSubmitting" class="material-icons-outlined mr-2 animate-spin">refresh</span>
+                            <span x-text="isSubmitting ? 'Criando...' : 'Criar Projeto'"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Preview Card (opcional) -->
+                <div x-show="formData.title || formData.description" x-transition class="mt-8">
+                    <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+                        <div class="px-6 py-4 bg-gray-50 border-b">
+                            <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                                <span class="material-icons-outlined text-green-600 mr-2">preview</span>
+                                Preview do Projeto
+                            </h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="max-w-md">
+                                <h4 class="text-xl font-bold text-gray-900 mb-2"
+                                    x-text="formData.title || 'Título do Projeto'"></h4>
+                                <div class="flex items-center space-x-2 mb-3">
+                                    <span x-show="formData.status" :class="{
+                                    'bg-gray-100 text-gray-800': formData.status === 'Conceito',
+                                    'bg-blue-100 text-blue-800': formData.status === 'Em andamento',
+                                    'bg-yellow-100 text-yellow-800': formData.status === 'Versão beta',
+                                    'bg-green-100 text-green-800': formData.status === 'No ar (lançado)'
+                                }" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                        x-text="formData.status">
+                                    </span>
+                                    <span x-show="formData.category" class="text-xs text-gray-500"
+                                        x-text="formData.category"></span>
+                                </div>
+                                <p class="text-gray-600 text-sm mb-4"
+                                    x-text="formData.description || 'Descrição do projeto aparecerá aqui...'"></p>
+                                <div x-show="formData.fundingGoal" class="space-y-2">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-gray-500">Meta de Financiamento:</span>
+                                        <span class="font-semibold text-green-600">
+                                            R$ <span
+                                                x-text="parseFloat(formData.fundingGoal || 0).toLocaleString('pt-BR')"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script>
+            function criarProjetoApp() {
+                return {
+                    formData: {
+                        title: '',
+                        description: '',
+                        category: '',
+                        status: 'Conceito',
+                        fundingGoal: '',
+                        rewards: []
+                    },
+                    errors: {},
+                    isSubmitting: false,
+
+                    init() {
+                        // Configurar interceptador do formulário
+                        const form = document.getElementById('createProjectForm');
+                        form.addEventListener('submit', (e) => this.handleSubmit(e));
+                    },
+
+                    validateField(field) {
+                        this.errors[field] = '';
+
+                        switch (field) {
+                            case 'title':
+                                if (!this.formData.title.trim()) {
+                                    this.errors.title = 'O título é obrigatório';
+                                } else if (this.formData.title.length < 3) {
+                                    this.errors.title = 'O título deve ter pelo menos 3 caracteres';
+                                }
+                                break;
+
+                            case 'description':
+                                if (!this.formData.description.trim()) {
+                                    this.errors.description = 'A descrição é obrigatória';
+                                } else if (this.formData.description.length < 10) {
+                                    this.errors.description = 'A descrição deve ter pelo menos 10 caracteres';
+                                }
+                                break;
+
+                            case 'category':
+                                if (!this.formData.category) {
+                                    this.errors.category = 'Selecione uma categoria';
+                                }
+                                break;
+
+                            case 'fundingGoal':
+                                const goal = parseFloat(this.formData.fundingGoal);
+                                if (!this.formData.fundingGoal) {
+                                    this.errors.fundingGoal = 'A meta de financiamento é obrigatória';
+                                } else if (isNaN(goal) || goal < 100) {
+                                    this.errors.fundingGoal = 'A meta deve ser de pelo menos R$ 100,00';
+                                }
+                                break;
+                        }
+                    },
+
+                    isFormValid() {
+                        return this.formData.title.trim() &&
+                            this.formData.description.trim() &&
+                            this.formData.category &&
+                            this.formData.fundingGoal &&
+                            parseFloat(this.formData.fundingGoal) >= 100 &&
+                            Object.keys(this.errors).every(key => !this.errors[key]);
+                    },
+
+                    addReward() {
+                        if (this.formData.rewards.length < 5) {
+                            this.formData.rewards.push('');
+                        }
+                    },
+
+                    removeReward(index) {
+                        this.formData.rewards.splice(index, 1);
+                    },
+
+                    resetForm() {
+                        this.formData = {
+                            title: '',
+                            description: '',
+                            category: '',
+                            status: 'Conceito',
+                            fundingGoal: '',
+                            rewards: []
+                        };
+                        this.errors = {};
+                    },
+
+                    async handleSubmit(e) {
+                        e.preventDefault();
+
+                        if (this.isSubmitting) return;
+
+                        // Validar todos os campos
+                        this.validateField('title');
+                        this.validateField('description');
+                        this.validateField('category');
+                        this.validateField('fundingGoal');
+
+                        if (!this.isFormValid()) {
+                            this.showNotification('Por favor, corrija os erros no formulário', 'error');
+                            return;
+                        }
+
+                        this.isSubmitting = true;
+
+                        try {
+                            // Preparar dados para envio
+                            const formData = new FormData();
+                            formData.append('title', this.formData.title);
+                            formData.append('description', this.formData.description);
+                            formData.append('category', this.formData.category);
+                            formData.append('status', this.formData.status);
+                            formData.append('fundingGoal', this.formData.fundingGoal);
+
+                            // Adicionar recompensas não vazias
+                            const validRewards = this.formData.rewards.filter(reward => reward.trim());
+                            validRewards.forEach((reward, index) => {
+                                formData.append(`rewards[${index}]`, reward);
+                            });
+
+                            const response = await fetch('/api/projects', {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            });
+
+                            const result = await response.json();
+
+                            if (response.ok) {
+                                this.showNotification('Projeto criado com sucesso!', 'success');
+
+                                // Redirecionar após um breve delay
+                                setTimeout(() => {
+                                    window.location.href = '/meus-projetos';
+                                }, 1500);
+                            } else {
+                                if (result.errors && Array.isArray(result.errors)) {
+                                    // Tratar erros de validação específicos
+                                    result.errors.forEach(error => {
+                                        if (error.field) {
+                                            this.errors[error.field] = error.message;
+                                        }
+                                    });
+                                    this.showNotification('Por favor, corrija os erros indicados', 'error');
+                                } else {
+                                    this.showNotification(result.message || 'Erro ao criar projeto', 'error');
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Erro ao criar projeto:', error);
+                            this.showNotification('Erro de conexão. Tente novamente.', 'error');
+                        } finally {
+                            this.isSubmitting = false;
+                        }
+                    },
+
+                    showNotification(message, type = 'info') {
+                        // Criar elemento de notificação
+                        const notification = document.createElement('div');
+                        notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full ${type === 'success' ? 'bg-green-500 text-white' :
+                                type === 'error' ? 'bg-red-500 text-white' :
+                                    'bg-blue-500 text-white'
+                            }`;
+                        notification.innerHTML = `
+                <div class="flex items-center">
+                    <span class="material-icons-outlined mr-2">${type === 'success' ? 'check_circle' :
+                                type === 'error' ? 'error' :
+                                    'info'
+                            }</span>
+                    ${message}
+                </div>
+            `;
+
+                        document.body.appendChild(notification);
+
+                        // Animar entrada
+                        setTimeout(() => {
+                            notification.classList.remove('translate-x-full');
+                        }, 100);
+
+                        // Remover após 4 segundos
+                        setTimeout(() => {
+                            notification.classList.add('translate-x-full');
+                            setTimeout(() => {
+                                document.body.removeChild(notification);
+                            }, 300);
+                        }, 4000);
+                    }
+                }
+            }
+        </script>
+
+        <%- include('./partials/footer') %>
