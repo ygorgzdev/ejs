@@ -1,7 +1,8 @@
+// backend/routes/pages.js - Versão atualizada com rota criar-projeto
 const express = require('express');
 const router = express.Router();
 const { authPage } = require('../middleware/auth');
-const { requireAuth, requireDeveloper } = require('../middleware/requireAuth'); // Adicionar esta linha
+const { requireAuth, requireDeveloper } = require('../middleware/requireAuth');
 const { register, login } = require('../controllers/authController');
 const Project = require('../models/Project');
 const mongoose = require('mongoose');
@@ -71,18 +72,24 @@ router.get('/logout', (req, res) => {
 });
 
 // IMPORTANTE: Rotas específicas ANTES da rota com parâmetro dinâmico (:id)
-// Rota para criar novo projeto (protegida)
-router.get('/projects/new', requireDeveloper, (req, res) => {
-  res.render('new-project', {
+
+// Rota para criar novo projeto - PRINCIPAL (protegida)
+router.get('/criar-projeto', requireDeveloper, (req, res) => {
+  res.render('criar-projeto', {
     title: 'Criar Novo Projeto - IncubePro'
   });
 });
 
-// Rota alternativa para criar projeto
-router.get('/criar-projeto', requireDeveloper, (req, res) => {
-  res.render('new-project', {
+// Rota para criar novo projeto (protegida) - alternativa
+router.get('/projects/new', requireDeveloper, (req, res) => {
+  res.render('criar-projeto', {
     title: 'Criar Novo Projeto - IncubePro'
   });
+});
+
+// Rota alternativa para criar projeto - redireciona para a principal
+router.get('/new-project', requireDeveloper, (req, res) => {
+  res.redirect('/criar-projeto');
 });
 
 // Rota para detalhes de um projeto específico

@@ -1,70 +1,184 @@
-// controllers/projectController.js
+// backend/controllers/projectController.js - Versão com suporte à criação via formulário
 const Project = require('../models/Project');
 const User = require('../models/User');
-const {
-  sendSuccess,
-  sendError,
-  sendCreated,
-  sendNotFound,
-  sendServerError
-} = require('../utils/responseHelper');
+const mongoose = require('mongoose');
 
 // Criar projeto
-exports.createProject = async (req, res) => {
-  const { title, description, category, status, fundingGoal, rewards } = req.body;
-
+const createProject = async (req, res) => {
   try {
-    if (req.user.role !== 'developer') {
-      return sendError(res, 'Apenas desenvolvedores podem criar projetos', null, 403);
-    }
-
-    const newProject = new Project({
+    const {
       title,
       description,
       category,
-      status: status || 'Conceito',
+      status = 'Conceito',
       fundingGoal,
-      rewards: rewards || [],
-      creator: req.user.id,
-    });
+      rewards = []
+    } = req.body;
 
-    await newProject.save();
+    // Validações básicas
+    if (!title || !description || !category || !fundingGoal) {
+      const errors = [];
 
-    // Populate para retornar dados do criador
-    await newProject.populate('creator', 'name email role');
+      if (!title) errors.push({ field: 'title', message: 'Título é obrigatório' });
+      if (!description) errors.push({ field: 'description', message: 'Descrição é obrigatória' });
+      if (!category) errors.push({ field: 'category', message: 'Categoria é obrigatória' });
+      if (!fundingGoal) errors.push({ field: 'fundingGoal', message: 'Meta de financiamento é obrigatória' });
 
-    sendCreated(res, newProject, 'Projeto criado com sucesso');
-  } catch (err) {
-    console.error('Erro ao criar projeto:', err);
-
-    if (err.name === 'ValidationError') {
-      const errors = Object.values(err.errors).map(e => ({
-        field: e.path,
-        message: e.message
-      }));
-      return sendError(res, 'Erro de validação', errors, 422);
+      return res.status(400).json({
+        success: false,
+        message: 'Dados obrigatórios não fornecidos',
+        errors
+      });
     }
 
-    sendServerError(res, 'Erro interno do servidor');
+    // Validar meta de financiamento
+    const fundingGoalNumber = parseFloat(fundingGoal);
+    if (isNaN(fundingGoalNumber) || fundingGoalNumber < 100) {
+      return res.status(400).json({
+        success: false,
+        message: 'Meta de financiamento deve ser de pelo menos R$ 100,00',
+        errors: [{ field: 'fundingGoal', message: 'Meta deve ser de pelo menos R$ 100,00' }]
+      });
+    }
+
+    // Validar título e descrição
+    if (title.length < 3) {
+      return res.status(400).json({
+        success: false,
+        message: 'Título deve ter pelo menos 3 caracteres',
+        errors: [{ field: 'title', message: 'Título deve ter pelo menos 3 caracteres' }]
+      });
+    }
+
+    if (description.length < 10) {
+      return res.status(400).json({
+        success: false,
+        message: 'Descrição deve ter pelo menos 10 caracteres',
+        errors: [{ field: 'description', message: 'Descrição deve ter pelo menos 10 caracteres' }]
+      });
+    }
+
+    // Processar recompensas (remover entradas vazias)
+    let processedRewards = [];
+    if (Array.isArray(rewards)) {
+      processedRewards = rewards.filter(reward => reward && reward.trim());
+    } else if (typeof rewards === 'object') {
+      // Se rewards vem como objeto (ex: rewards[0], rewards[1])
+      processedRewards = Object.values(rewards).filter(reward => reward && reward.trim());
+    }
+
+    // Verificar se o usuário é um developer
+    if (req.user.role !== 'developer') {
+      return res.status(403).json({
+        success: false,
+        message: 'Apenas desenvolvedores podem criar projetos'
+      });
+    }
+
+    // Criar projeto
+    const project = new Project({
+      title: title.trim(),
+      description: description.trim(),
+      category,
+      status,
+      fundingGoal: fundingGoalNumber,
+      currentFunding: 0,
+      rewards: processedRewards,
+      creator: req.user.id,
+      backers: [],
+      tags: [],
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    await project.save();
+
+    // Popular dados do criador para retorno
+    await project.populate('creator', 'name email role avatar');
+
+    // Resposta diferenciada para requisições AJAX vs formulário normal
+    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
+      // Requisição AJAX - retornar JSON
+      return res.status(201).json({
+        success: true,
+        message: 'Projeto criado com sucesso!',
+        data: {
+          project: {
+            _id: project._id,
+            title: project.title,
+            description: project.description,
+            category: project.category,
+            status: project.status,
+            fundingGoal: project.fundingGoal,
+            currentFunding: project.currentFunding,
+            rewards: project.rewards,
+            creator: project.creator,
+            createdAt: project.createdAt
+          }
+        }
+      });
+    } else {
+      // Requisição normal - redirecionar
+      return res.redirect('/meus-projetos?created=true');
+    }
+
+  } catch (error) {
+    console.error('Erro ao criar projeto:', error);
+
+    // Tratar erros de validação do Mongoose
+    if (error.name === 'ValidationError') {
+      const errors = Object.keys(error.errors).map(key => ({
+        field: key,
+        message: error.errors[key].message
+      }));
+
+      if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
+        return res.status(400).json({
+          success: false,
+          message: 'Erro de validação',
+          errors
+        });
+      } else {
+        return res.status(400).render('criar-projeto', {
+          title: 'Criar Novo Projeto - IncubePro',
+          error: 'Erro de validação nos dados fornecidos',
+          formData: req.body
+        });
+      }
+    }
+
+    // Erro interno do servidor
+    if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
+      return res.status(500).json({
+        success: false,
+        message: 'Erro interno do servidor'
+      });
+    } else {
+      return res.status(500).render('error', {
+        title: 'Erro - IncubePro',
+        message: 'Erro interno do servidor ao criar projeto',
+        error: process.env.NODE_ENV === 'development' ? error : null
+      });
+    }
   }
 };
 
-// Listar todos os projetos (com paginação e filtros)
-exports.getAllProjects = async (req, res) => {
+// Listar todos os projetos
+const getAllProjects = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 12;
     const skip = (page - 1) * limit;
 
     // Construir filtros
     const filters = {};
 
-    if (req.query.category) {
-      filters.category = req.query.category;
-    }
-
     if (req.query.status) {
       filters.status = req.query.status;
+    }
+
+    if (req.query.category) {
+      filters.category = req.query.category;
     }
 
     if (req.query.search) {
@@ -74,21 +188,8 @@ exports.getAllProjects = async (req, res) => {
       ];
     }
 
-    if (req.query.creator) {
-      filters.creator = req.query.creator;
-    }
-
-    // Filtro por meta de financiamento
-    if (req.query.minFunding) {
-      filters.fundingGoal = { ...filters.fundingGoal, $gte: parseInt(req.query.minFunding) };
-    }
-
-    if (req.query.maxFunding) {
-      filters.fundingGoal = { ...filters.fundingGoal, $lte: parseInt(req.query.maxFunding) };
-    }
-
     // Definir ordenação
-    let sortBy = { createdAt: -1 }; // Padrão: mais recentes primeiro
+    let sortBy = { createdAt: -1 };
 
     if (req.query.sortBy) {
       switch (req.query.sortBy) {
@@ -109,213 +210,235 @@ exports.getAllProjects = async (req, res) => {
       }
     }
 
-    // Buscar projetos
     const projects = await Project.find(filters)
       .populate('creator', 'name email role avatar')
       .skip(skip)
       .limit(limit)
       .sort(sortBy);
 
-    // Contar total de projetos
     const total = await Project.countDocuments(filters);
 
-    const meta = {
-      pagination: {
-        current: page,
-        pages: Math.ceil(total / limit),
-        total,
-        hasNext: page < Math.ceil(total / limit),
-        hasPrev: page > 1
-      },
-      filters: {
-        category: req.query.category || null,
-        status: req.query.status || null,
-        search: req.query.search || null
-      }
+    const pagination = {
+      current: page,
+      pages: Math.ceil(total / limit),
+      total,
+      hasNext: page < Math.ceil(total / limit),
+      hasPrev: page > 1,
+      limit
     };
 
-    sendSuccess(res, projects, 'Projetos recuperados com sucesso', 200, meta);
-  } catch (err) {
-    console.error('Erro ao buscar projetos:', err);
-    sendServerError(res, 'Erro interno do servidor');
+    res.json({
+      success: true,
+      data: {
+        projects,
+        pagination,
+        filters: {
+          status: req.query.status || null,
+          category: req.query.category || null,
+          search: req.query.search || null,
+          sortBy: req.query.sortBy || 'newest'
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro ao buscar projetos:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
   }
 };
 
 // Buscar projeto por ID
-exports.getProjectById = async (req, res) => {
+const getProjectById = async (req, res) => {
   try {
     const project = await Project.findById(req.params.id)
-      .populate('creator', 'name email role bio skills avatar createdAt');
+      .populate('creator', 'name email role avatar')
+      .populate('backers.user', 'name email role avatar');
 
     if (!project) {
-      return sendNotFound(res, 'Projeto não encontrado');
+      return res.status(404).json({
+        success: false,
+        message: 'Projeto não encontrado'
+      });
     }
 
-    sendSuccess(res, project, 'Projeto recuperado com sucesso');
-  } catch (err) {
-    console.error('Erro ao buscar projeto:', err);
+    res.json({
+      success: true,
+      data: { project }
+    });
 
-    if (err.name === 'CastError') {
-      return sendError(res, 'ID do projeto inválido', null, 400);
+  } catch (error) {
+    console.error('Erro ao buscar projeto:', error);
+
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'ID do projeto inválido'
+      });
     }
 
-    sendServerError(res, 'Erro interno do servidor');
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
   }
 };
 
 // Atualizar projeto completo (PUT)
-exports.updateProject = async (req, res) => {
+const updateProject = async (req, res) => {
   try {
-    const projectId = req.params.id;
-    const { title, description, category, status, fundingGoal, rewards } = req.body;
-
-    // Buscar projeto
-    const project = await Project.findById(projectId);
+    const project = await Project.findById(req.params.id);
 
     if (!project) {
-      return sendNotFound(res, 'Projeto não encontrado');
+      return res.status(404).json({
+        success: false,
+        message: 'Projeto não encontrado'
+      });
     }
 
     // Verificar se o usuário é o criador do projeto ou admin
     if (project.creator.toString() !== req.user.id && req.user.role !== 'admin') {
-      return sendError(res, 'Acesso negado. Você só pode atualizar seus próprios projetos', null, 403);
+      return res.status(403).json({
+        success: false,
+        message: 'Você não tem permissão para editar este projeto'
+      });
     }
 
-    // Atualizar projeto
     const updatedProject = await Project.findByIdAndUpdate(
-      projectId,
-      {
-        title,
-        description,
-        category,
-        status,
-        fundingGoal,
-        rewards: rewards || []
-      },
+      req.params.id,
+      { ...req.body, updatedAt: new Date() },
       { new: true, runValidators: true }
-    ).populate('creator', 'name email role');
+    ).populate('creator', 'name email role avatar');
 
-    sendSuccess(res, updatedProject, 'Projeto atualizado com sucesso');
-  } catch (err) {
-    console.error('Erro ao atualizar projeto:', err);
+    res.json({
+      success: true,
+      message: 'Projeto atualizado com sucesso',
+      data: { project: updatedProject }
+    });
 
-    if (err.name === 'ValidationError') {
-      const errors = Object.values(err.errors).map(e => ({
-        field: e.path,
-        message: e.message
+  } catch (error) {
+    console.error('Erro ao atualizar projeto:', error);
+
+    if (error.name === 'ValidationError') {
+      const errors = Object.keys(error.errors).map(key => ({
+        field: key,
+        message: error.errors[key].message
       }));
-      return sendError(res, 'Erro de validação', errors, 422);
+
+      return res.status(400).json({
+        success: false,
+        message: 'Erro de validação',
+        errors
+      });
     }
 
-    if (err.name === 'CastError') {
-      return sendError(res, 'ID do projeto inválido', null, 400);
-    }
-
-    sendServerError(res, 'Erro interno do servidor');
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
   }
 };
 
 // Atualizar projeto parcialmente (PATCH)
-exports.patchProject = async (req, res) => {
+const patchProject = async (req, res) => {
   try {
-    const projectId = req.params.id;
-    const updates = req.body;
-
-    // Buscar projeto
-    const project = await Project.findById(projectId);
+    const project = await Project.findById(req.params.id);
 
     if (!project) {
-      return sendNotFound(res, 'Projeto não encontrado');
+      return res.status(404).json({
+        success: false,
+        message: 'Projeto não encontrado'
+      });
     }
 
     // Verificar se o usuário é o criador do projeto ou admin
     if (project.creator.toString() !== req.user.id && req.user.role !== 'admin') {
-      return sendError(res, 'Acesso negado. Você só pode atualizar seus próprios projetos', null, 403);
+      return res.status(403).json({
+        success: false,
+        message: 'Você não tem permissão para editar este projeto'
+      });
     }
 
-    // Campos permitidos para atualização
-    const allowedFields = ['title', 'description', 'category', 'status', 'fundingGoal', 'rewards'];
-    const updateFields = {};
+    const updatedProject = await Project.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body, updatedAt: new Date() },
+      { new: true, runValidators: true }
+    ).populate('creator', 'name email role avatar');
 
-    // Filtrar apenas campos permitidos
-    Object.keys(updates).forEach(key => {
-      if (allowedFields.includes(key)) {
-        updateFields[key] = updates[key];
-      }
+    res.json({
+      success: true,
+      message: 'Projeto atualizado com sucesso',
+      data: { project: updatedProject }
     });
 
-    // Verificar se há campos para atualizar
-    if (Object.keys(updateFields).length === 0) {
-      return sendError(res, 'Nenhum campo válido fornecido para atualização', null, 400);
-    }
+  } catch (error) {
+    console.error('Erro ao atualizar projeto:', error);
 
-    // Atualizar projeto
-    const updatedProject = await Project.findByIdAndUpdate(
-      projectId,
-      { $set: updateFields },
-      { new: true, runValidators: true }
-    ).populate('creator', 'name email role');
-
-    sendSuccess(res, updatedProject, 'Projeto atualizado com sucesso');
-  } catch (err) {
-    console.error('Erro ao atualizar projeto:', err);
-
-    if (err.name === 'ValidationError') {
-      const errors = Object.values(err.errors).map(e => ({
-        field: e.path,
-        message: e.message
+    if (error.name === 'ValidationError') {
+      const errors = Object.keys(error.errors).map(key => ({
+        field: key,
+        message: error.errors[key].message
       }));
-      return sendError(res, 'Erro de validação', errors, 422);
+
+      return res.status(400).json({
+        success: false,
+        message: 'Erro de validação',
+        errors
+      });
     }
 
-    if (err.name === 'CastError') {
-      return sendError(res, 'ID do projeto inválido', null, 400);
-    }
-
-    sendServerError(res, 'Erro interno do servidor');
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
   }
 };
 
 // Deletar projeto
-exports.deleteProject = async (req, res) => {
+const deleteProject = async (req, res) => {
   try {
-    const projectId = req.params.id;
-
-    // Buscar projeto
-    const project = await Project.findById(projectId);
+    const project = await Project.findById(req.params.id);
 
     if (!project) {
-      return sendNotFound(res, 'Projeto não encontrado');
+      return res.status(404).json({
+        success: false,
+        message: 'Projeto não encontrado'
+      });
     }
 
     // Verificar se o usuário é o criador do projeto ou admin
     if (project.creator.toString() !== req.user.id && req.user.role !== 'admin') {
-      return sendError(res, 'Acesso negado. Você só pode deletar seus próprios projetos', null, 403);
+      return res.status(403).json({
+        success: false,
+        message: 'Você não tem permissão para deletar este projeto'
+      });
     }
 
-    // Deletar projeto
-    await Project.findByIdAndDelete(projectId);
+    await Project.findByIdAndDelete(req.params.id);
 
-    sendSuccess(res, null, 'Projeto deletado com sucesso');
-  } catch (err) {
-    console.error('Erro ao deletar projeto:', err);
+    res.json({
+      success: true,
+      message: 'Projeto deletado com sucesso'
+    });
 
-    if (err.name === 'CastError') {
-      return sendError(res, 'ID do projeto inválido', null, 400);
-    }
-
-    sendServerError(res, 'Erro interno do servidor');
+  } catch (error) {
+    console.error('Erro ao deletar projeto:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
   }
 };
 
-// Obter projetos do usuário logado
-exports.getMyProjects = async (req, res) => {
+// Buscar projetos do usuário logado
+const getMyProjects = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 12;
     const skip = (page - 1) * limit;
 
-    // Filtros adicionais
     const filters = { creator: req.user.id };
 
     if (req.query.status) {
@@ -326,46 +449,93 @@ exports.getMyProjects = async (req, res) => {
       filters.category = req.query.category;
     }
 
-    // Buscar projetos do usuário
+    if (req.query.search) {
+      filters.$or = [
+        { title: { $regex: req.query.search, $options: 'i' } },
+        { description: { $regex: req.query.search, $options: 'i' } }
+      ];
+    }
+
+    let sortBy = { createdAt: -1 };
+
+    if (req.query.sortBy) {
+      switch (req.query.sortBy) {
+        case 'title':
+          sortBy = { title: 1 };
+          break;
+        case 'fundingGoal':
+          sortBy = { fundingGoal: -1 };
+          break;
+        case 'currentFunding':
+          sortBy = { currentFunding: -1 };
+          break;
+        case 'oldest':
+          sortBy = { createdAt: 1 };
+          break;
+      }
+    }
+
     const projects = await Project.find(filters)
-      .populate('creator', 'name email role')
+      .populate('creator', 'name email role avatar')
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort(sortBy);
 
-    // Contar total
     const total = await Project.countDocuments(filters);
 
-    const meta = {
-      pagination: {
-        current: page,
-        pages: Math.ceil(total / limit),
-        total,
-        hasNext: page < Math.ceil(total / limit),
-        hasPrev: page > 1
-      }
+    const pagination = {
+      current: page,
+      pages: Math.ceil(total / limit),
+      total,
+      hasNext: page < Math.ceil(total / limit),
+      hasPrev: page > 1,
+      limit
     };
 
-    sendSuccess(res, projects, 'Seus projetos recuperados com sucesso', 200, meta);
-  } catch (err) {
-    console.error('Erro ao buscar projetos do usuário:', err);
-    sendServerError(res, 'Erro interno do servidor');
+    res.json({
+      success: true,
+      data: {
+        projects,
+        pagination,
+        filters: {
+          status: req.query.status || null,
+          category: req.query.category || null,
+          search: req.query.search || null,
+          sortBy: req.query.sortBy || 'newest'
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro ao buscar meus projetos:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
   }
 };
 
-// Obter estatísticas de projetos
-exports.getProjectStats = async (req, res) => {
+// Estatísticas de projetos
+const getProjectStats = async (req, res) => {
   try {
-    // Estatísticas gerais
-    const totalProjects = await Project.countDocuments();
+    const stats = await Project.aggregate([
+      {
+        $group: {
+          _id: null,
+          total: { $sum: 1 },
+          totalFunding: { $sum: '$currentFunding' },
+          totalGoal: { $sum: '$fundingGoal' },
+          avgFunding: { $avg: '$currentFunding' },
+          avgGoal: { $avg: '$fundingGoal' }
+        }
+      }
+    ]);
 
     const statusStats = await Project.aggregate([
       {
         $group: {
           _id: '$status',
-          count: { $sum: 1 },
-          totalFunding: { $sum: '$fundingGoal' },
-          avgFunding: { $avg: '$fundingGoal' }
+          count: { $sum: 1 }
         }
       }
     ]);
@@ -374,27 +544,42 @@ exports.getProjectStats = async (req, res) => {
       {
         $group: {
           _id: '$category',
-          count: { $sum: 1 },
-          totalFunding: { $sum: '$fundingGoal' }
+          count: { $sum: 1 }
         }
       }
     ]);
 
-    // Projeto com maior meta de financiamento
-    const highestFunding = await Project.findOne()
-      .sort({ fundingGoal: -1 })
-      .populate('creator', 'name role');
+    res.json({
+      success: true,
+      data: {
+        general: stats[0] || {
+          total: 0,
+          totalFunding: 0,
+          totalGoal: 0,
+          avgFunding: 0,
+          avgGoal: 0
+        },
+        byStatus: statusStats,
+        byCategory: categoryStats
+      }
+    });
 
-    const stats = {
-      total: totalProjects,
-      byStatus: statusStats,
-      byCategory: categoryStats,
-      highestFundingProject: highestFunding
-    };
-
-    sendSuccess(res, stats, 'Estatísticas recuperadas com sucesso');
-  } catch (err) {
-    console.error('Erro ao buscar estatísticas:', err);
-    sendServerError(res, 'Erro interno do servidor');
+  } catch (error) {
+    console.error('Erro ao buscar estatísticas:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
   }
+};
+
+module.exports = {
+  createProject,
+  getAllProjects,
+  getProjectById,
+  updateProject,
+  patchProject,
+  deleteProject,
+  getMyProjects,
+  getProjectStats
 };
